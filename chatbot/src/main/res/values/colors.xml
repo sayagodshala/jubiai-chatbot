@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="white">#ffffff</color>
+    <color name="grey">#FFBEBDBD</color>
+    <color name="grey1">#cecdcd</color>
+    <color name="light_grey">#e6e6e6</color>
+    <color name="dark_grey">#8f8f8f</color>
+    <color name="black">#000000</color>
+
+    <color name="grey2">#f2f2f2</color>
+    <color name="grey3">#e2e2e2</color>
+    <color name="grey4">#d1d1d1</color>
+    <color name="grey5">#c4c4c4</color>
+
+    <color name="bg">#EFEEF0</color>
+
+    <color name="primary_text_black">#000000</color>
+    <color name="secondary_text_black">#89000000</color>
+    <color name="disabled_text_black">#60000000</color>
+
+    <color name="primary_text_white">#ffffff</color>
+    <color name="secondary_text_white">#89ffffff</color>
+    <color name="disabled_text_white">#60ffffff</color>
+
+    <!--Material Colors-->
+    <color name="mat_red">#f44336</color>
+    <color name="mat_red_light">#ff7961</color>
+    <color name="mat_red_dark">#ba000d</color>
+    <color name="mat_red_bub_sent">#FFEBEE</color>
+    <color name="mat_red_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_pink">#e91e63</color>
+    <color name="mat_pink_light">#ff6090</color>
+    <color name="mat_pink_dark">#b0003a</color>
+    <color name="mat_pink_bub_sent">#FCE4EC</color>
+    <color name="mat_pink_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_purple">#9c27b0</color>
+    <color name="mat_purple_light">#d05ce3</color>
+    <color name="mat_purple_dark">#6a0080</color>
+    <color name="mat_purple_bub_sent">#F3E5F5</color>
+    <color name="mat_purple_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_deep_purple">#673ab7</color>
+    <color name="mat_deep_purple_light">#9a67ea</color>
+    <color name="mat_deep_purple_dark">#320b86</color>
+    <color name="mat_deep_purple_bub_sent">#EDE7F6</color>
+    <color name="mat_deep_purple_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_indigo">#3f51b5</color>
+    <color name="mat_indigo_light">#757de8</color>
+    <color name="mat_indigo_dark">#002984</color>
+    <color name="mat_indigo_bub_sent">#E8EAF6</color>
+    <color name="mat_indigo_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_blue">#2196f3</color>
+    <color name="mat_blue_light">#6ec6ff</color>
+    <color name="mat_blue_dark">#2196f3</color>
+    <color name="mat_blue_bub_sent">#E3F2FD</color>
+    <color name="mat_blue_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_light_blue">#03a9f4</color>
+    <color name="mat_light_blue_light">#67daff</color>
+    <color name="mat_light_blue_dark">#007ac1</color>
+    <color name="mat_light_blue_bub_sent">#E1F5FE</color>
+    <color name="mat_light_blue_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_cyan">#00bcd4</color>
+    <color name="mat_cyan_light">#62efff</color>
+    <color name="mat_cyan_dark">#008ba3</color>
+    <color name="mat_cyan_bub_sent">#E0F7FA</color>
+    <color name="mat_cyan_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_teal">#009688</color>
+    <color name="mat_teal_light">#52c7b8</color>
+    <color name="mat_teal_dark">#00675b</color>
+    <color name="mat_teal_bub_sent">#E0F2F1</color>
+    <color name="mat_teal_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_blue_grey">#607d8b</color>
+    <color name="mat_blue_grey_light">#8eacbb</color>
+    <color name="mat_blue_grey_dark">#34515e</color>
+    <color name="mat_blue_grey_bub_sent">#ECEFF1</color>
+    <color name="mat_blue_grey_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_yellow">#ffeb3b</color>
+    <color name="mat_yellow_light">#ffff72</color>
+    <color name="mat_yellow_dark">#c8b900</color>
+    <color name="mat_yellow_bub_sent">#FFFDE7</color>
+    <color name="mat_yellow_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_amber">#ffc107</color>
+    <color name="mat_amber_light">#fff350</color>
+    <color name="mat_amber_dark">#c79100</color>
+    <color name="mat_amber_bub_sent">#FFF8E1</color>
+    <color name="mat_amber_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_brown">#795548</color>
+    <color name="mat_brown_light">#a98274</color>
+    <color name="mat_brown_dark">#4b2c20</color>
+    <color name="mat_brown_bub_sent">#EFEBE9</color>
+    <color name="mat_brown_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_green">#4caf50</color>
+    <color name="mat_green_light">#80e27e</color>
+    <color name="mat_green_dark">#087f23</color>
+    <color name="mat_green_bub_sent">#E8F5E9</color>
+    <color name="mat_green_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_grey">#9e9e9e</color>
+    <color name="mat_grey_light">#cfcfcf</color>
+    <color name="mat_grey_dark">#707070</color>
+    <color name="mat_grey_bub_sent">#FAFAFA</color>
+    <color name="mat_grey_bub_rcvd">#f6f9fa</color>
+    <!---->
+
+</resources>

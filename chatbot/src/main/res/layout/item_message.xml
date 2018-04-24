@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/space"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/received_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:id="@+id/brand_logo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/circle_ic_bg"
+            android:padding="6dp" />
+
+        <ImageView
+            android:id="@+id/arrow_rcvd"
+            android:layout_toRightOf="@+id/brand_logo"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="12dp"
+            android:src="@mipmap/chat_rcvd_arrow"/>
+
+        <ImageView
+            android:id="@+id/typing"
+            android:layout_width="50dp"
+            android:layout_height="31dp"
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@+id/arrow_rcvd"
+            android:padding="6dp"
+            android:src="@drawable/dots"
+            android:visibility="gone" />
+
+        <!--android:layout_marginRight="24dp"-->
+        <LinearLayout
+            android:id="@+id/field_cont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="-2dp"
+            android:layout_toRightOf="@+id/arrow_rcvd"
+            android:orientation="vertical"></LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/carousel_cont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/field_cont"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="4dp"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/sent_cont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="24dp">
+
+        <ImageView
+            android:id="@+id/sender_pic"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/ic_chat_pic"
+            android:tint="@color/colorPrimary" />
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/sender_pic">
+
+            <TextView
+                android:id="@+id/sent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="@drawable/message_sent_bg"
+                android:padding="16dp"
+                android:text="My Message ssc ssv sdv "
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/arrow_sent"
+                android:layout_toRightOf="@+id/sent"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="-2dp"
+                android:tint="@color/mat_green"
+                android:src="@mipmap/chat_sent_arrow"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

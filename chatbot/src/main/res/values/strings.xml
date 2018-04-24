@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ChatBot</string>
+    <string name="title_activity_chat">ChatActivity</string>
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="error_load_video">Error while loading videos</string>
+    <string name="notification_channel_id" translatable="false">fcm_default_channel</string>
+</resources>

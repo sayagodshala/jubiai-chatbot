@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "465691939584",
+    "firebase_url": "https://jubiai-app.firebaseio.com",
+    "project_id": "jubiai-app",
+    "storage_bucket": "jubiai-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:465691939584:android:3fdd51db496aab54",
+        "android_client_info": {
+          "package_name": "com.jubi.ai.chatbot.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "465691939584-5h1ufpvhak481aiahc2164p4nrp7butp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jubi.ai.chatbot.demo",
+            "certificate_hash": "46f39b1de299c1ae4d6dcc2c08110ea262def37c"
+          }
+        },
+        {
+          "client_id": "465691939584-vqs47vur2o177h8tabvqh3poc4fq1nf8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jubi.ai.chatbot.demo",
+            "certificate_hash": "fd52fb44e5cedd1f2c4f7d887632986aa295bd11"
+          }
+        },
+        {
+          "client_id": "465691939584-3einoo4krlcn3a5iop79p84arngv4a51.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXBgsYIbroL6SDhAkYv85FicaY30lFDCc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "465691939584-3einoo4krlcn3a5iop79p84arngv4a51.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
