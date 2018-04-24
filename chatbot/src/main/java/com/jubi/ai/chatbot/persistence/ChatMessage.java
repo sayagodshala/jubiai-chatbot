@@ -111,6 +111,7 @@ public class ChatMessage {
     public static Chat copyProperties(ChatMessage chatMessage) {
 //        Log.d("ChatMessage", new Gson().toJson(chatMessage));
         Chat chat = new Chat();
+        chat.setId(chatMessage.getId());
         chat.setIncoming(chatMessage.isIncoming());
         chat.setProjectId(chatMessage.getProjectId());
         chat.setWebId(chatMessage.getWebId());

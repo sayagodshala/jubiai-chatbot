@@ -39,6 +39,7 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
     private List<ChatOption> items;
     private MaterialTheme materialTheme;
     private IResultListener<View> mItemClickListener;
+    private Chat chat;
 
     public ChatMessageCarouselAdapter(Context context, List<ChatOption> items, MaterialTheme materialTheme) {
         this.context = context;

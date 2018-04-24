@@ -47,7 +47,7 @@ public class ChatBotModel {
     }
 
     public void updateChat(ChatMessage chatMessage) {
-        database.chatMessageDao().insertChat(chatMessage);
+        database.chatMessageDao().updateChat(chatMessage);
     }
 
     public void insertChat(String chatMessage) {

@@ -9,7 +9,7 @@ import com.jubi.ai.chatbot.enums.AnswerType;
 import java.util.List;
 
 public class Chat {
-
+    private int id;
     private String webId;
     private String projectId;
     private List<BotMessage> botMessages;
@@ -19,6 +19,14 @@ public class Chat {
     private Boolean persist;
 
     public Chat() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getWebId() {

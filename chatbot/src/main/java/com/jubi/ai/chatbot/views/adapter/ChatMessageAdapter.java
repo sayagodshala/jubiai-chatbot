@@ -100,7 +100,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
         else
             holder.space.setVisibility(View.GONE);
         ChatMessage chatMessage = chatMessages.get(position);
-        Chat chat = ChatMessage.copyProperties(chatMessage);
+        final Chat chat = ChatMessage.copyProperties(chatMessage);
         MaterialColor materialColor = materialTheme.getColor();
         List<BotMessage> botMessages = chat.getBotMessages() != null ? chat.getBotMessages() : new ArrayList<BotMessage>();
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -182,24 +182,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
 
                     break;
                 case OPTION:
-                    itemDecoration = new ItemOffsetDecoration(context, R.dimen.item_offset);
-                    recyclerView = (RecyclerView) layoutInflater.inflate(R.layout.recycler_view, null);
-                    chatMessageOptionAdapter = new ChatMessageOptionAdapter(context, new ArrayList<ChatOption>(), materialTheme);
-                    chatMessageOptionAdapter.setItemClickListener(new IResultListener<View>() {
-                        @Override
-                        public void onResult(View view) {
-                            mChildItemClickListener.onResult(view);
-                        }
-                    });
-                    gridLayoutManager = new GridLayoutManager(context, 2);
-                    recyclerView.setLayoutManager(gridLayoutManager);
-                    recyclerView.setAdapter(chatMessageOptionAdapter);
-                    chatMessageOptionAdapter.addItems(chat.getOptions());
-                    recyclerView.addItemDecoration(itemDecoration);
-                    holder.fieldCont.addView(recyclerView);
-                    break;
-                case PERSIST_OPTION:
-                    if (!chatMessage.isPersist()) {
+                    if (chat.getOptions() != null && chat.getOptions().size() > 0) {
                         itemDecoration = new ItemOffsetDecoration(context, R.dimen.item_offset);
                         recyclerView = (RecyclerView) layoutInflater.inflate(R.layout.recycler_view, null);
                         chatMessageOptionAdapter = new ChatMessageOptionAdapter(context, new ArrayList<ChatOption>(), materialTheme);
@@ -212,10 +195,30 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                         gridLayoutManager = new GridLayoutManager(context, 2);
                         recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.setAdapter(chatMessageOptionAdapter);
-                        chatMessageOptionAdapter.addItems(chat.getOptions());
+                        chatMessageOptionAdapter.addItems(chat);
                         recyclerView.addItemDecoration(itemDecoration);
                         holder.fieldCont.addView(recyclerView);
                     }
+
+                    break;
+                case PERSIST_OPTION:
+//                    if (!chatMessage.isPersist()) {
+                    itemDecoration = new ItemOffsetDecoration(context, R.dimen.item_offset);
+                    recyclerView = (RecyclerView) layoutInflater.inflate(R.layout.recycler_view, null);
+                    chatMessageOptionAdapter = new ChatMessageOptionAdapter(context, new ArrayList<ChatOption>(), materialTheme);
+                    chatMessageOptionAdapter.setItemClickListener(new IResultListener<View>() {
+                        @Override
+                        public void onResult(View view) {
+                            mChildItemClickListener.onResult(view);
+                        }
+                    });
+                    gridLayoutManager = new GridLayoutManager(context, 2);
+                    recyclerView.setLayoutManager(gridLayoutManager);
+                    recyclerView.setAdapter(chatMessageOptionAdapter);
+                    chatMessageOptionAdapter.addItems(chat);
+                    recyclerView.addItemDecoration(itemDecoration);
+                    holder.fieldCont.addView(recyclerView);
+//                    }
                     break;
                 case GENERIC:
                     chatMessageCarouselAdapter = new ChatMessageCarouselAdapter(context, new ArrayList<ChatOption>(), materialTheme);

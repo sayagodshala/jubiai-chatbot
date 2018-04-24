@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jubi.ai.chatbot.R;
+import com.jubi.ai.chatbot.enums.AnswerType;
 import com.jubi.ai.chatbot.enums.MaterialColor;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.listeners.ChatBotFragmentListener;
@@ -235,6 +236,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         chatMessageAdapter.setChildItemClickListener(new IResultListener<View>() {
             @Override
             public void onResult(View view) {
+
                 if (view.getTag() != null) {
                     if (view.getTag() instanceof ChatOption) {
                         ChatOption chatOption = (ChatOption) view.getTag();
@@ -242,6 +244,26 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                     } else if (view.getTag() instanceof ChatButton) {
                         ChatButton chatButton = (ChatButton) view.getTag();
                         chatBotPresenter.sendSelectedOption(chatButton);
+                    }
+                } else {
+                    Chat chat = (Chat) view.getTag(R.id.chat);
+                    Log.d("Chat", new Gson().toJson(chat));
+                    if (chat != null) {
+                        ChatOption chatOption = (ChatOption) view.getTag(R.id.option);
+                        if (chatOption != null) {
+                            chatBotPresenter.sendSelectedOption(chatOption);
+                            if (chat.getAnswerType() == AnswerType.OPTION) {
+                                ChatMessage chatMessage = new ChatMessage();
+                                chatMessage.setId(chat.getId());
+                                if (chat.getBotMessages() != null)
+                                    chatMessage.setBotMessage(new Gson().toJson(chat.getBotMessages()));
+                                chatMessage.setAnswerType(chat.getAnswerType().getDescription().toUpperCase());
+                                chatMessage.setWebId(chat.getWebId());
+                                chatMessage.setProjectId(chat.getProjectId());
+                                chatBotPresenter.updateChat(chatMessage);
+                                Log.d("ChatUpdated", new Gson().toJson(chat));
+                            }
+                        }
                     }
                 }
             }
@@ -337,40 +359,42 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
             isAppJustOpened = false;
 
-            if (chatMessage.isPersist()) {
-                switch (chat.getAnswerType()) {
-                    case PERSIST_OPTION:
-                        ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(getActivity(), R.dimen.item_offset);
-                        ChatMessageOptionAdapter chatMessageOptionAdapter = new ChatMessageOptionAdapter(getActivity(), new ArrayList<ChatOption>(), chatBotConfig.getMaterialTheme());
-                        chatMessageOptionAdapter.setItemClickListener(new IResultListener<View>() {
-                            @Override
-                            public void onResult(View view) {
-                                if (view.getTag() != null) {
-                                    if (view.getTag() instanceof ChatOption) {
-                                        ChatOption chatOption = (ChatOption) view.getTag();
-                                        chatMessage.setPersist(false);
-                                        chatBotPresenter.updateChat(chatMessage);
-                                        chatBotPresenter.sendSelectedOption(chatOption);
+            chatMessageAdapter.addItems(chatMessages);
+            recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
 
-                                    }
-                                }
-                            }
-                        });
-                        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-                        persistOption.setLayoutManager(gridLayoutManager);
-                        persistOption.setAdapter(chatMessageOptionAdapter);
-                        chatMessageOptionAdapter.addItems(chat.getOptions());
-                        persistOption.addItemDecoration(itemDecoration);
-                        persistOption.setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                        chatMessageAdapter.addItems(chatMessages);
-                        recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
-                        break;
-                }
-            } else {
-
-            }
+//            if (chatMessage.isPersist()) {
+//                switch (chat.getAnswerType()) {
+//                    case PERSIST_OPTION:
+//                        ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(getActivity(), R.dimen.item_offset);
+//                        ChatMessageOptionAdapter chatMessageOptionAdapter = new ChatMessageOptionAdapter(getActivity(), new ArrayList<ChatOption>(), chatBotConfig.getMaterialTheme());
+//                        chatMessageOptionAdapter.setItemClickListener(new IResultListener<View>() {
+//                            @Override
+//                            public void onResult(View view) {
+//                                if (view.getTag() != null) {
+//                                    if (view.getTag() instanceof ChatOption) {
+//                                        ChatOption chatOption = (ChatOption) view.getTag();
+//                                        chatMessage.setPersist(false);
+//                                        chatBotPresenter.updateChat(chatMessage);
+//                                        chatBotPresenter.sendSelectedOption(chatOption);
+//
+//                                    }
+//                                }
+//                            }
+//                        });
+//                        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+//                        persistOption.setLayoutManager(gridLayoutManager);
+//                        persistOption.setAdapter(chatMessageOptionAdapter);
+//                        chatMessageOptionAdapter.addItems(chat.getOptions());
+//                        persistOption.addItemDecoration(itemDecoration);
+//                        persistOption.setVisibility(View.VISIBLE);
+//                        break;
+//                    default:
+//
+//                        break;
+//                }
+//            } else {
+//
+//            }
             if (empty.getVisibility() == View.VISIBLE)
                 empty.setVisibility(View.GONE);
         }

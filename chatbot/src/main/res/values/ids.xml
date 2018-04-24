@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="chat" type="id">1</item>
+    <item name="option_id" type="id">2</item>
+    <item name="sub_option_id" type="id">3</item>
+    <item name="option" type="id">4</item>
+</resources>

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.jubi.ai.chatbot.R;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.listeners.IResultListener;
+import com.jubi.ai.chatbot.models.Chat;
 import com.jubi.ai.chatbot.models.ChatOption;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.viewholder.ChatMessageOptionViewHolder;
@@ -29,6 +30,7 @@ public class ChatMessageOptionAdapter extends RecyclerView.Adapter<ChatMessageOp
             }
         }
     };
+    private Chat chat;
 
     public void setItemClickListener(IResultListener<View> listener) {
         mItemClickListener = listener;
@@ -52,7 +54,8 @@ public class ChatMessageOptionAdapter extends RecyclerView.Adapter<ChatMessageOp
         holder.setIsRecyclable(false);
         ChatOption chatOption = items.get(position);
         holder.option.setText(chatOption.getText());
-        holder.option.setTag(chatOption);
+        holder.option.setTag(R.id.chat, chat);
+        holder.option.setTag(R.id.option, chatOption);
         holder.option.setOnClickListener(clickListener);
         holder.option.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialTheme.getColor().getWhite()), context.getResources().getColor(materialTheme.getColor().getRegular()), true));
     }
@@ -62,8 +65,9 @@ public class ChatMessageOptionAdapter extends RecyclerView.Adapter<ChatMessageOp
         return items.size();
     }
 
-    public void addItems(List<ChatOption> items) {
-        this.items = items;
+    public void addItems(Chat chat) {
+        this.chat = chat;
+        this.items = chat.getOptions();
         notifyDataSetChanged();
     }
 }

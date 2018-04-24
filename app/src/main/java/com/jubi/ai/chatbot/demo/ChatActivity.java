@@ -71,7 +71,7 @@ public class ChatActivity extends AppCompatActivity {
 //        chatBotConfig.setProjectId("JUBI15Q9uk_EarlySalaryFAQ");
         chatBotConfig.setProjectId("JUBIzMjyA_sasasasas");
 //        chatBotConfig.setHost("https://hdfc-backend.herokuapp.com");
-        chatBotConfig.setPath("/backend/web");
+        chatBotConfig.setPath("/backend");
         chatBotConfig.setHost("http://bot.meetaina.com");
         return chatBotConfig;
     }
