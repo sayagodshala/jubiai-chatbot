@@ -86,6 +86,14 @@ public class ChatHeadService extends Service {
 
 
         ImageView chatHeadImage = (ImageView) mChatHeadView.findViewById(R.id.chat);
+        ImageView close = (ImageView) mChatHeadView.findViewById(R.id.close);
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopSelf();
+            }
+        });
 
         chatHeadImage.setOnTouchListener(new View.OnTouchListener() {
             private int lastAction;
