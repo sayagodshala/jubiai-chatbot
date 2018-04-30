@@ -116,6 +116,13 @@
     <color name="mat_grey_dark">#707070</color>
     <color name="mat_grey_bub_sent">#FAFAFA</color>
     <color name="mat_grey_bub_rcvd">#f6f9fa</color>
+
+    <color name="mat_reliance">#0b4492</color>
+    <color name="mat_reliance_light">#1859b3</color>
+    <color name="mat_reliance_dark">#043373</color>
+    <color name="mat_reliance_bub_sent">#FAFAFA</color>
+    <color name="mat_reliance_bub_rcvd">#f6f9fa</color>
+    <color name="mat_reliance_status_bar">#00aaa9</color>
     <!---->
 
 </resources>

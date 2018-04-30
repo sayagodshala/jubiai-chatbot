@@ -65,7 +65,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChatBotConfig chatBotConfig() {
         ChatBotConfig chatBotConfig = new ChatBotConfig();
         chatBotConfig.setAppLogo(R.drawable.ic_company_logo);
-        chatBotConfig.setMaterialTheme(MaterialTheme.BROWN);
+        chatBotConfig.setMaterialTheme(MaterialTheme.RELIANCE);
         chatBotConfig.setTitle("EarlySalaryFaq");
 //        chatBotConfig.setProjectId("JUBIzMjyA_Julia");
 //        chatBotConfig.setProjectId("JUBI15Q9uk_EarlySalaryFAQ");

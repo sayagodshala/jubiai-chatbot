@@ -347,6 +347,8 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     public void onChatViewModelUpdate(List<ChatMessage> chatMessages) {
         if (chatMessages.size() == 0) {
             showNoChatMessagesView();
+            pushMessage("get started");
+            chatBotPresenter.startFakeTypingMessageListener();
         } else {
             final ChatMessage chatMessage = chatMessages.get(chatMessages.size() - 1);
 
