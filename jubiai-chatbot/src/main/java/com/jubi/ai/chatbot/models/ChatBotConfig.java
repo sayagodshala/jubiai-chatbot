@@ -23,6 +23,8 @@ public class ChatBotConfig implements Parcelable {
     private String regularColor = null;
     private String host = null;
     private String path = null;
+    private String fcmToken;
+    private boolean imageUpload = false;
 
     public ChatBotConfig() {
     }
@@ -107,6 +109,14 @@ public class ChatBotConfig implements Parcelable {
         this.path = path;
     }
 
+    public boolean isImageUpload() {
+        return imageUpload;
+    }
+
+    public void setImageUpload(boolean imageUpload) {
+        this.imageUpload = imageUpload;
+    }
+
     public void setCustomTheme() {
         materialTheme = MaterialTheme.CUSTOM;
         MaterialColor materialColor = materialTheme.getColor();
@@ -132,6 +142,14 @@ public class ChatBotConfig implements Parcelable {
         hsv[2] *= 1.35f;
         color = Color.HSVToColor(hsv);
         return color;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public final static class Builder {
@@ -170,6 +188,8 @@ public class ChatBotConfig implements Parcelable {
         dest.writeString(this.regularColor);
         dest.writeString(this.host);
         dest.writeString(this.path);
+        dest.writeString(this.fcmToken);
+        dest.writeByte(this.imageUpload ? (byte) 1 : (byte) 0);
     }
 
     protected ChatBotConfig(Parcel in) {
@@ -182,6 +202,8 @@ public class ChatBotConfig implements Parcelable {
         this.regularColor = in.readString();
         this.host = in.readString();
         this.path = in.readString();
+        this.fcmToken = in.readString();
+        this.imageUpload = in.readByte() != 0;
     }
 
     public static final Creator<ChatBotConfig> CREATOR = new Creator<ChatBotConfig>() {

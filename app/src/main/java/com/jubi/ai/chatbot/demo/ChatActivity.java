@@ -6,8 +6,10 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.models.ChatBotConfig;
 import com.jubi.ai.chatbot.services.ChatHeadService;
@@ -65,14 +67,16 @@ public class ChatActivity extends AppCompatActivity {
     private ChatBotConfig chatBotConfig() {
         ChatBotConfig chatBotConfig = new ChatBotConfig();
         chatBotConfig.setAppLogo(R.drawable.ic_company_logo);
-        chatBotConfig.setMaterialTheme(MaterialTheme.RELIANCE);
-        chatBotConfig.setTitle("EarlySalaryFaq");
+        chatBotConfig.setMaterialTheme(MaterialTheme.ICICI);
+        chatBotConfig.setTitle("ICICI Lombard Travel Bot");
 //        chatBotConfig.setProjectId("JUBIzMjyA_Julia");
 //        chatBotConfig.setProjectId("JUBI15Q9uk_EarlySalaryFAQ");
-        chatBotConfig.setProjectId("JUBIzMjyA_sasasasas");
+        chatBotConfig.setProjectId("JUBIFLjxP_travelInsurance");
 //        chatBotConfig.setHost("https://hdfc-backend.herokuapp.com");
-        chatBotConfig.setPath("/backend");
-        chatBotConfig.setHost("http://bot.meetaina.com");
+        chatBotConfig.setPath("android");
+        chatBotConfig.setHost("https://icici-lombard-backend.herokuapp.com");
+        chatBotConfig.setImageUpload(true);
+        chatBotConfig.setFcmToken(FirebaseInstanceId.getInstance().getToken());
         return chatBotConfig;
     }
 

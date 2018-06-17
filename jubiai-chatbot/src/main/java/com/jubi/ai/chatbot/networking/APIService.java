@@ -17,7 +17,7 @@ import rx.Observable;
 
 public interface APIService {
 
-    @POST("{domainPath}/android/{projectName}")
+    @POST("{domainPath}/{projectName}")
     Observable<Response<BasicResponse>> send(@Path("domainPath") String domainPath, @Path("projectName") String projectName, @Body OutgoingMessage message);
 
     @FormUrlEncoded

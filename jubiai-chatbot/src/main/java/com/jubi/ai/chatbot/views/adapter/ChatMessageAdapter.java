@@ -111,36 +111,44 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                 final BotMessage botMessage = botMessages.get(i);
                 switch (botMessage.getType()) {
                     case TEXT:
-                        view = (View) layoutInflater.inflate(R.layout.item_text, null);
-                        TextView textView = view.findViewById(R.id.received);
-                        textView.setText(botMessage.getValue());
-                        textView.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                        textView.setTextColor(context.getResources().getColor(materialColor.getBlack()));
-                        holder.fieldCont.addView(view);
+                        if (!Util.textIsEmpty(botMessage.getValue())) {
+                            view = (View) layoutInflater.inflate(R.layout.item_text, null);
+                            TextView textView = view.findViewById(R.id.received);
+                            textView.setText(botMessage.getValue());
+                            textView.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            textView.setTextColor(context.getResources().getColor(materialColor.getBlack()));
+                            holder.fieldCont.addView(view);
+                        }
                         break;
                     case AUDIO:
                         break;
                     case IMAGE:
-                        view = (View) layoutInflater.inflate(R.layout.item_image, null);
-                        ImageView imageView = view.findViewById(R.id.image);
-                        imageView.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                        Picasso.with(context).load(botMessage.getValue()).into(imageView);
+                        if (!Util.textIsEmpty(botMessage.getValue())) {
+                            view = (View) layoutInflater.inflate(R.layout.item_image, null);
+                            ImageView imageView = view.findViewById(R.id.image);
+                            imageView.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://"))
+                                Picasso.with(context).load(botMessage.getValue()).into(imageView);
+                            else
+                                Picasso.with(context).load(Uri.parse("file://" + botMessage.getValue())).into(imageView);
 //                        Glide.with(context).load(botMessage.getValue()).into(imageView);
-                        view.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                        imageView.setTag(botMessage);
-                        imageView.setOnClickListener(clickListener);
-                        holder.fieldCont.addView(view);
+                            view.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            imageView.setTag(botMessage);
+                            imageView.setOnClickListener(clickListener);
+                            holder.fieldCont.addView(view);
+                        }
                         break;
                     case VIDEO:
-                        view = (View) layoutInflater.inflate(R.layout.item_youtube, null);
-                        ImageView iv = view.findViewById(R.id.image);
-                        iv.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                        Picasso.with(context).load("https://i.ytimg.com/vi/" + botMessage.getValue() + "/hqdefault.jpg").into(iv);
+                        if (!Util.textIsEmpty(botMessage.getValue())) {
+                            view = (View) layoutInflater.inflate(R.layout.item_youtube, null);
+                            ImageView iv = view.findViewById(R.id.image);
+                            iv.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            Picasso.with(context).load("https://i.ytimg.com/vi/" + botMessage.getValue() + "/hqdefault.jpg").into(iv);
 //                        Glide.with(context).load(botMessage.getValue()).into(imageView);
-                        view.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                        iv.setTag(botMessage);
-                        iv.setOnClickListener(clickListener);
-                        holder.fieldCont.addView(view);
+                            view.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            iv.setTag(botMessage);
+                            iv.setOnClickListener(clickListener);
+                            holder.fieldCont.addView(view);
 //                        view = (View) layoutInflater.inflate(R.layout.item_youtube_thumbnail, null);
 //                        YouTubeThumbnailView thumbnail = (YouTubeThumbnailView) view.findViewById(R.id.thumbnail);
 //                        final YouTubeThumbnailLoader[] youTubeThumbnailLoader = new YouTubeThumbnailLoader[1];
@@ -171,6 +179,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
 //                            }
 //                        });
 //                        holder.fieldCont.addView(view);
+                        }
                         break;
                 }
             }
@@ -243,7 +252,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
             holder.sent.setText(botMessages.get(0).getValue());
             holder.receivedView.setVisibility(View.GONE);
         }
-        holder.brandLogo.setImageResource(appLogo);
+//        holder.brandLogo.setImageResource(appLogo);
 
         applyTheme(holder);
     }
@@ -263,7 +272,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
         switch (materialTheme) {
             case WHITE:
                 holder.senderPic.setColorFilter(ContextCompat.getColor(context, materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
-                holder.brandLogo.setBackgroundDrawable(Util.drawCircle(context.getResources().getColor(materialColor.getDark())));
+//                holder.brandLogo.setBackgroundDrawable(Util.drawCircle(context.getResources().getColor(materialColor.getDark())));
                 holder.arrowSent.setColorFilter(ContextCompat.getColor(context, materialColor.getLight()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.sent.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getLight()), context.getResources().getColor(materialColor.getLight()), false));
@@ -275,7 +284,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                 holder.arrowSent.setColorFilter(ContextCompat.getColor(context, materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.senderPic.setColorFilter(ContextCompat.getColor(context, materialColor.getLight()), android.graphics.PorterDuff.Mode.SRC_IN);
-                holder.brandLogo.setBackgroundDrawable(Util.drawCircle(context.getResources().getColor(materialColor.getRegular())));
+//                holder.brandLogo.setBackgroundDrawable(Util.drawCircle(context.getResources().getColor(materialColor.getRegular())));
                 break;
         }
 //        holder.sent.setTextColor(ContextCompat.getColor(context, materialColor.getWhite()));

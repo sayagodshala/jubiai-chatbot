@@ -4,6 +4,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.net.Uri;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -182,6 +183,10 @@ public class ChatBotPresenter {
 
             }
         }.start();
+    }
+
+    public void cameraImageChatMessage(Uri uri) {
+        receiveChat(chatBotModel.cameraImageChatMessage(uri));
     }
 
     public void startFakeTypingMessageListener() {

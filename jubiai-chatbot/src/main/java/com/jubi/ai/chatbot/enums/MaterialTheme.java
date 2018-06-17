@@ -20,7 +20,8 @@ public enum MaterialTheme {
     GREY(MaterialColor.GREY),
     DEFAULT(MaterialColor.WHITE),
     CUSTOM(MaterialColor.WHITE),
-    RELIANCE(MaterialColor.RELIANCE);
+    RELIANCE(MaterialColor.RELIANCE),
+    ICICI(MaterialColor.ICICI);
 
     public MaterialColor color;
 

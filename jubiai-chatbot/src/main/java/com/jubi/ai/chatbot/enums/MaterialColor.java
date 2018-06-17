@@ -22,7 +22,8 @@ public enum MaterialColor {
     GREY(R.color.mat_grey, R.color.mat_grey_light, R.color.mat_grey_dark, R.color.primary_text_black, R.color.secondary_text_black, R.color.disabled_text_black, R.color.mat_grey_bub_rcvd, R.color.mat_grey_bub_sent, R.color.bg, R.color.white, R.color.grey, R.color.black, R.color.mat_grey_dark),
     WHITE(R.color.white, R.color.light_grey, R.color.dark_grey, R.color.primary_text_black, R.color.secondary_text_black, R.color.disabled_text_black, R.color.mat_grey_bub_rcvd, R.color.mat_grey_bub_sent, R.color.bg, R.color.white, R.color.grey, R.color.black, R.color.black),
     CUSTOM(R.color.white, R.color.light_grey, R.color.dark_grey, R.color.primary_text_black, R.color.secondary_text_black, R.color.disabled_text_black, R.color.mat_grey_bub_rcvd, R.color.mat_grey_bub_sent, R.color.bg, R.color.white, R.color.grey, R.color.black, R.color.black),
-    RELIANCE(R.color.mat_reliance, R.color.mat_reliance_light, R.color.mat_reliance_dark, R.color.primary_text_white, R.color.secondary_text_black, R.color.disabled_text_black, R.color.mat_reliance_bub_rcvd, R.color.mat_reliance_bub_sent, R.color.bg, R.color.white, R.color.grey, R.color.black, R.color.mat_reliance_status_bar);
+    RELIANCE(R.color.mat_reliance, R.color.mat_reliance_light, R.color.mat_reliance_dark, R.color.primary_text_white, R.color.secondary_text_black, R.color.disabled_text_black, R.color.mat_reliance_bub_rcvd, R.color.mat_reliance_bub_sent, R.color.bg, R.color.white, R.color.grey, R.color.black, R.color.mat_reliance_status_bar),
+    ICICI(R.color.mat_icici, R.color.mat_icici_light, R.color.mat_icici_dark, R.color.primary_text_white, R.color.secondary_text_black, R.color.disabled_text_black, R.color.mat_icici_bub_rcvd, R.color.mat_icici_bub_sent, R.color.bg, R.color.white, R.color.grey, R.color.black, R.color.mat_icici_status_bar);
 
 
     private int regular;

@@ -5,12 +5,9 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {
-            url 'https://dl.bintray.com/sayagodshala/maven/'
-        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha07'
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha14'
         classpath 'com.google.gms:google-services:3.2.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
@@ -23,9 +20,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven {
-            url 'https://dl.bintray.com/sayagodshala/maven/'
-        }
     }
 }
 

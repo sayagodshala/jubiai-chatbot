@@ -28,9 +28,12 @@ import com.jubi.ai.chatbot.services.ChatHeadService;
 import com.jubi.ai.chatbot.util.CustomPopoverView;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.fragment.ChatBotFragment;
+import com.squareup.picasso.Picasso;
 
 import net.gotev.speech.Logger;
 import net.gotev.speech.Speech;
+
+import java.util.Locale;
 
 import static rx.schedulers.Schedulers.start;
 
@@ -53,8 +56,9 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         chatBotConfig = new ChatBotConfig();
 
         Speech.init(this, getPackageName());
+        Speech.getInstance().setLocale(new Locale("en_IN"));
         Logger.setLogLevel(Logger.LogLevel.DEBUG);
-
+        Picasso.with(this).setLoggingEnabled(true);
         chatStartCont = findViewById(R.id.chat_start_cont);
         start = findViewById(R.id.start);
         chatDialog = findViewById(R.id.chat_dialog);
@@ -70,10 +74,10 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
             chatBotConfig = (ChatBotConfig) getIntent().getParcelableExtra(CHATBOT_CONFIG);
             if (chatBotConfig.getProjectId() != null && chatBotConfig.getHost() != null) {
                 preferenceUtils.setChatBotConfig(chatBotConfig);
-                startTimerForChatWidget();
-                start.setOnClickListener(this);
+//                startTimerForChatWidget();
+                loadChatView();
+//                start.setOnClickListener(this);
                 applyTheme();
-
             } else {
                 chatBotConfigDialog();
             }
@@ -90,12 +94,13 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
 
     public static void saveConfig(Context context, ChatBotConfig chatBotConfig) {
         PreferenceUtils preferenceUtils = new PreferenceUtils(context);
+        preferenceUtils.setFCMToken(chatBotConfig.getFcmToken());
         preferenceUtils.setChatBotConfig(chatBotConfig);
     }
 
     @Override
     public void onChatBotBackpressed() {
-
+        onBackPressed();
     }
 
     @Override
@@ -211,7 +216,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         initChatHead();
     }
 
-    private void changeStatusBarColor(){
+    private void changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= 21) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);

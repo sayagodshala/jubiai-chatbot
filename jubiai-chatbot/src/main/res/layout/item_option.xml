@@ -12,6 +12,7 @@
         android:background="@drawable/options_bg"
         android:paddingBottom="8dp"
         android:clickable="true"
+        android:gravity="center"
         android:paddingTop="8dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource">
+    <item
+        android:id="@+id/start_over"
+        android:title="Start Over" />
+    <item
+        android:id="@+id/cancel"
+        android:title="Cancel Conversation" />
+    <item
+        android:id="@+id/talk"
+        android:title="Talk To Agent" />
+</menu>

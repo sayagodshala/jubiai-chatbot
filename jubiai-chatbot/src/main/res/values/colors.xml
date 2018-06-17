@@ -123,6 +123,13 @@
     <color name="mat_reliance_bub_sent">#FAFAFA</color>
     <color name="mat_reliance_bub_rcvd">#f6f9fa</color>
     <color name="mat_reliance_status_bar">#00aaa9</color>
+
+    <color name="mat_icici">#b6461b</color>
+    <color name="mat_icici_light">#de6e18</color>
+    <color name="mat_icici_dark">#a1370f</color>
+    <color name="mat_icici_bub_sent">#FAFAFA</color>
+    <color name="mat_icici_bub_rcvd">#f6f9fa</color>
+    <color name="mat_icici_status_bar">#00aaa9</color>
     <!---->
 
 </resources>

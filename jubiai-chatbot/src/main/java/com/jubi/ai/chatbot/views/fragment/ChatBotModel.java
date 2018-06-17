@@ -1,6 +1,7 @@
 package com.jubi.ai.chatbot.views.fragment;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.google.gson.Gson;
 import com.jubi.ai.chatbot.ChatBotApp;
@@ -190,6 +191,21 @@ public class ChatBotModel {
         String[] images = {"http://139.59.22.129/plantandmachinery/saya_website/images/box8.png", "http://139.59.22.129/plantandmachinery/saya_website/images/pic10.png", "http://139.59.22.129/plantandmachinery/saya_website/images/ap.png"};
 
         botMessages.add(new BotMessage(2, Type.IMAGE.name(), images[index]));
+
+        chatMessage.setBotMessage(new Gson().toJson(botMessages));
+
+        return chatMessage;
+    }
+
+    public ChatMessage cameraImageChatMessage(Uri uri) {
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setProjectId(chatBotConfig.getProjectId());
+        chatMessage.setWebId(chatBotConfig.getWebId());
+        chatMessage.setAnswerType(AnswerType.TEXT.name());
+
+        List<BotMessage> botMessages = new ArrayList<>();
+
+        botMessages.add(new BotMessage(2, Type.IMAGE.name(), uri.getPath()));
 
         chatMessage.setBotMessage(new Gson().toJson(botMessages));
 

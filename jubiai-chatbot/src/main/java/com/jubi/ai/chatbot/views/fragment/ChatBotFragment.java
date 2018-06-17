@@ -3,18 +3,27 @@ package com.jubi.ai.chatbot.views.fragment;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.jubi.ai.chatbot.BuildConfig;
 import com.jubi.ai.chatbot.R;
 import com.jubi.ai.chatbot.enums.AnswerType;
 import com.jubi.ai.chatbot.enums.MaterialColor;
@@ -45,11 +55,14 @@ import com.jubi.ai.chatbot.views.activity.WebViewActivity;
 import com.jubi.ai.chatbot.views.adapter.ChatMessageAdapter;
 import com.jubi.ai.chatbot.views.adapter.ChatMessageOptionAdapter;
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.squareup.picasso.Picasso;
 import com.xw.repo.XEditText;
 
 import net.gotev.speech.GoogleVoiceTypingDisabledException;
@@ -59,16 +72,23 @@ import net.gotev.speech.SpeechRecognitionNotAvailable;
 import net.gotev.speech.SpeechUtil;
 import net.gotev.speech.ui.SpeechProgressView;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import rx.subscriptions.CompositeSubscription;
 
+import static android.app.Activity.RESULT_OK;
 
-public class ChatBotFragment extends Fragment implements ChatBotView, View.OnClickListener, SpeechDelegate {
+
+public class ChatBotFragment extends Fragment implements ChatBotView, View.OnClickListener, SpeechDelegate, PopupMenu.OnMenuItemClickListener {
 
     public static final String TAG = "ChatBotFragment";
     private static final int REQ_CODE_SPEECH_INPUT = 1001;
+    private static final int CAMERA_REQUEST = 1001;
 
     private Bundle bundle;
     public static String CHATBOT_CONFIG = "chatbot_config";
@@ -76,7 +96,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     private View view;
     private XEditText message;
-    private ImageView send, back, hideChat, mic, mute;
+    private ImageView send, back, hideChat, mic, mute, camera, menu;
     private TextView title, headline, info;
     private LinearLayout toolbar, empty, speechCont;
     private RecyclerView recyclerView, persistOption;
@@ -86,8 +106,8 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     private ChatBotPresenter chatBotPresenter;
     private ChatBotConfig chatBotConfig;
     private CompositeSubscription compositeSubscription;
-
     private boolean isAppJustOpened = true;
+    private Uri cameraFile;
 
     public ChatBotFragment() {
         // Required empty public constructor
@@ -167,6 +187,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     @Override
     public void onDestroy() {
         super.onDestroy();
+
     }
 
     private void bindView() {
@@ -184,8 +205,10 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         headline = view.findViewById(R.id.headline);
         info = view.findViewById(R.id.info);
         submit = view.findViewById(R.id.submit);
+        camera = view.findViewById(R.id.camera);
         hideChat = view.findViewById(R.id.hide_chat);
         persistOption = view.findViewById(R.id.persist_option);
+        menu = view.findViewById(R.id.menu);
 
         chatBotPresenter.enableDisableSend(send, false);
 
@@ -224,6 +247,10 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         int[] heights = {40, 56, 38, 60, 35};
         speechProgress.setBarMaxHeightsInDp(heights);
 
+        hideChat.setVisibility(View.GONE);
+
+        camera.setVisibility(chatBotConfig.isImageUpload() ? View.VISIBLE : View.GONE);
+
     }
 
     private void setViewListeners() {
@@ -232,6 +259,8 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         back.setOnClickListener(this);
         hideChat.setOnClickListener(this);
         mute.setOnClickListener(this);
+        camera.setOnClickListener(this);
+        menu.setOnClickListener(this);
         chatBotPresenter.onInputMessageChangeListener(message, send);
 
         chatMessageAdapter.setChildItemClickListener(new IResultListener<View>() {
@@ -290,6 +319,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 submit.setBackgroundDrawable(Util.selectorRoundedBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getDark()), false));
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getPrimaryText()), android.graphics.PorterDuff.Mode.SRC_IN);
+                camera.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
                 break;
             default:
                 toolbar.setBackgroundDrawable(Util.selectorBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
@@ -299,6 +329,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 submit.setBackgroundDrawable(Util.selectorRoundedBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getWhite()), android.graphics.PorterDuff.Mode.SRC_IN);
+                camera.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
                 break;
         }
     }
@@ -355,7 +386,16 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             Chat chat = ChatMessage.copyProperties(chatMessage);
             if (mute.getAlpha() != 0.3f && !isAppJustOpened) {
                 if (chat.isIncoming() && chat.getBotMessages() != null && chat.getBotMessages().size() > 0) {
-                    Speech.getInstance().say(chat.getBotMessages().get(0).getValue());
+                    StringBuilder forSpeech = new StringBuilder();
+                    for (BotMessage bot : chat.getBotMessages()) {
+                        if (bot.getValue().contains("http://") || bot.getValue().contains("https://")) {
+                            // todo
+                        } else {
+                            forSpeech.append(bot.getValue());
+                        }
+                    }
+                    if (!Util.textIsEmpty(forSpeech.toString()))
+                        Speech.getInstance().say(forSpeech.toString());
                 }
             }
 
@@ -436,10 +476,77 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 mute.setAlpha(0.3f);
                 UiUtils.showSnackbar(getActivity().findViewById(android.R.id.content), "Sound for speech is muted", Snackbar.LENGTH_SHORT);
             }
+        } else if (view.getId() == R.id.camera) {
+            Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                @Override
+                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                    if (report.areAllPermissionsGranted()) {
+                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                        StrictMode.setVmPolicy(builder.build());
+                        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                        cameraFile = FileProvider.getUriForFile(getActivity(),
+//                                BuildConfig.APPLICATION_ID + ".provider",
+//                                getOutputMediaFile());
+//                        cameraFile = Uri.fromFile(getOutputMediaFile());
 
+                        String fileName = BuildConfig.APPLICATION_ID + "_"
+                                + String.valueOf(System.currentTimeMillis()) + ".jpg";
+                        cameraFile = Uri.fromFile(new File(Environment
+                                .getExternalStorageDirectory()
+                                + "/"
+                                + BuildConfig.APPLICATION_ID, fileName));
+
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraFile);
+                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                    }
+                }
+
+                @Override
+                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                    token.continuePermissionRequest();
+                }
+            }).check();
+        } else if (view.getId() == R.id.menu) {
+            PopupMenu popup = new PopupMenu(getActivity(), menu);
+            popup.setOnMenuItemClickListener(this);
+            popup.inflate(R.menu.persistent_menu);
+            popup.show();
         } else {
             mListener.onChatBotBackpressed();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST) {
+            File file = new File(cameraFile.getPath());
+            if (file.exists()) {
+                pushMessage("Image Uploaded");
+                chatBotPresenter.cameraImageChatMessage(cameraFile);
+            } else {
+                //UiUtils.showToast(getActivity(), "Some problem occurred while capturing picture!");
+            }
+
+        }
+    }
+
+    private File getOutputMediaFile() {
+
+        String folderName = getString(R.string.app_name);
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), folderName);
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        return new File(mediaStorageDir.getPath() + File.separator +
+                "IMG_" + timeStamp + ".jpg");
     }
 
     protected int getScreenHeight() {
@@ -448,6 +555,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     private void startListening() {
         Speech.getInstance().stopTextToSpeech();
+
         mic.setVisibility(View.GONE);
         speechCont.setVisibility(View.VISIBLE);
         try {
@@ -596,6 +704,30 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 .build();
 
         customPopoverView.show();
+    }
+
+    public static boolean checkAlphabetic(String input) {
+        for (int i = 0; i != input.length(); ++i) {
+            if (!Character.isLetterOrDigit(input.charAt(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if (item.getItemId() == R.id.start_over) {
+            pushMessage("get started");
+            return true;
+        } else if (item.getItemId() == R.id.cancel) {
+            pushMessage("cancel");
+            return true;
+        } else {
+            pushMessage("talk to agent");
+            return true;
+        }
     }
 
 }

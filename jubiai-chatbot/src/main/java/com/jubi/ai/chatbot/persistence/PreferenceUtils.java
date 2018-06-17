@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.jubi.ai.chatbot.util.Constants;
 import com.jubi.ai.chatbot.models.ChatBotConfig;
+import com.jubi.ai.chatbot.util.Util;
 
 /**
  * Created by sayagodshala on 15/05/17.
@@ -31,24 +32,24 @@ public class PreferenceUtils extends PreferenceHelper {
     }
 
     public void setFCMToken(String token) {
-        Log.d("setFCMToken", token);
+        Log.d("setFCMToken", !Util.textIsEmpty(token) ? token : "empty");
         addPreference(Constants.PreferenceKeys.FCM_REGISTRATION_ID, token);
     }
 
     public void setFCMAPIKey(String apiKey) {
-        Log.d("setFcmApiKey", apiKey);
+        Log.d("setFcmApiKey", !Util.textIsEmpty(apiKey) ? apiKey : "empty");
         addPreference(Constants.PreferenceKeys.FCM_API_KEY, apiKey);
     }
 
     public String getFCMToken() {
         String raw = getString(Constants.PreferenceKeys.FCM_REGISTRATION_ID, "");
-        Log.d("GCM Token", raw);
+        Log.d("GCM Token", !Util.textIsEmpty(raw) ? raw : "empty");
         return raw;
     }
 
     public String getFCMAPIKey() {
         String raw = getString(Constants.PreferenceKeys.FCM_API_KEY, "");
-        Log.d("FCM APIKey", raw);
+        Log.d("FCM APIKey", !Util.textIsEmpty(raw) ? raw : "empty");
         return raw;
     }
 
@@ -58,7 +59,7 @@ public class PreferenceUtils extends PreferenceHelper {
 
     public String getDBName() {
         String raw = getString(Constants.PreferenceKeys.DB_NAME, "");
-        Log.d("DB Name", raw);
+        Log.d("DB Name", !Util.textIsEmpty(raw) ? raw : "empty");
         return raw;
     }
 
