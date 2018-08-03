@@ -443,7 +443,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             final ChatMessage chatMessage = chatMessages.get(chatMessages.size() - 1);
 
             Chat chat = ChatMessage.copyProperties(chatMessage);
-            if (mute.getAlpha() != 0.3f && !isAppJustOpened) {
+            if (chatBotConfig.isSpeechRequired() && mute.getAlpha() != 0.3f && !isAppJustOpened) {
                 if (chat.isIncoming() && chat.getBotMessages() != null && chat.getBotMessages().size() > 0) {
                     StringBuilder forSpeech = new StringBuilder();
                     for (BotMessage bot : chat.getBotMessages()) {

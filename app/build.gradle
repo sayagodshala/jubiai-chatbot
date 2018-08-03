@@ -6,8 +6,8 @@ android {
         applicationId "com.jubi.ai.chatbot.demo"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -22,11 +22,6 @@ configurations.all {
     resolutionStrategy.force 'com.android.support:support-annotations:27.0.2'
 }
 
-repositories {
-    maven {
-        url 'https://dl.bintray.com/sayagodshala/maven/'
-    }
-}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -43,10 +38,10 @@ dependencies {
     implementation('com.google.firebase:firebase-messaging:11.8.0') {
         exclude module: 'support-v4'
     }
-        implementation project(':jubiai-chatbot')
+//        implementation project(':jubiai-chatbot')
     implementation 'com.facebook.stetho:stetho:1.5.0'
     implementation 'com.google.code.gson:gson:2.8.2'
-//    implementation 'com.sayagodshala:jubiai-chatbot:1.0.0'
+    implementation 'com.sayagodshala:jubiai-chatbot:1.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
