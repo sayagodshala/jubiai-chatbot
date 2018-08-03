@@ -5,17 +5,18 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/image_cont"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:background="@drawable/message_received_bg"
+        android:layout_marginTop="4dp"
         android:padding="4dp">
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:scaleType="centerCrop" />
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder" />
 
     </LinearLayout>
 

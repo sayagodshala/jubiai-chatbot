@@ -52,24 +52,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
-        // Check if message contains a data payload.
-
-
         if (ChatBotApp.isChatBotMessage(remoteMessage.getData())) {
             ChatBotNotification chatBotNotification = ChatBotApp.copyPropertiesFromMap(remoteMessage.getData());
             ChatBotApp.handleMessage(getApplicationContext(), chatBotNotification);
-//            ChatBotApp.generateChatBotNotification(getApplicationContext(), ChatActivity.class, chatBotNotification, R.drawable.ic_noti_jubi);
-        } else {
-            // handle your app message here;
         }
 
-        // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification: " + new Gson().toJson(remoteMessage.getNotification()));
         }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
 
 }

@@ -35,10 +35,13 @@ import com.jubi.ai.chatbot.models.BasicResponse;
 import com.jubi.ai.chatbot.models.RestError;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
@@ -74,7 +77,6 @@ public class Util {
 
         return keyHash;
     }
-
 
 
     public static String getCertificateSHA1Fingerprint(Context context) {
@@ -140,7 +142,7 @@ public class Util {
 
     public static boolean textIsEmpty(String value) {
 
-        if(value == null)
+        if (value == null)
             return true;
 
         boolean empty = false;
@@ -244,8 +246,7 @@ public class Util {
         try {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
             app_installed = true;
-        }
-        catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e) {
             app_installed = false;
         }
         return app_installed;
@@ -331,7 +332,7 @@ public class Util {
         GradientDrawable pressedDrawable = new GradientDrawable();
         pressedDrawable.setColor(pressed);
         pressedDrawable.setCornerRadius(16);
-        if(stroke == true) {
+        if (stroke == true) {
             normalDrawable.setStroke(4, pressed);
             pressedDrawable.setStroke(4, pressed);
         }
@@ -347,7 +348,7 @@ public class Util {
         normalDrawable.setColor(normal);
         GradientDrawable pressedDrawable = new GradientDrawable();
         pressedDrawable.setColor(pressed);
-        if(stroke == true) {
+        if (stroke == true) {
             normalDrawable.setStroke(4, pressed);
             pressedDrawable.setStroke(4, pressed);
         }
@@ -379,7 +380,7 @@ public class Util {
         return oval;
     }
 
-    public static void defaultAnimateView(Context context,ViewGroup view) {
+    public static void defaultAnimateView(Context context, ViewGroup view) {
         Sequent
                 .origin(view)
                 .duration(500) // option.
@@ -388,6 +389,21 @@ public class Util {
                 .flow(Direction.FORWARD) // option. Flow of animations in (FORWARD/BACKWARD/RANDOM).
                 .anim(context, Animation.FADE_IN_UP)// option. implemented Animation or ObjectAnimator xml resource.
                 .start();
+    }
+
+    public static String getFileExtensionByUrl(String url) {
+        String extension = url.substring(url.lastIndexOf("."));
+        return extension;
+    }
+
+    public static URL checkURL(String input) {
+        try {
+            URL url = new URL(input);
+            return url;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

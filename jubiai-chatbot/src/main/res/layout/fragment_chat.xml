@@ -99,8 +99,9 @@
 
         <ImageView
             android:id="@+id/menu"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
             android:tint="@color/dark_grey"
             android:src="@drawable/ic_menu" />
 
@@ -124,7 +125,7 @@
             android:id="@+id/camera"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:src="@drawable/ic_camera_alt" />
+            android:src="@drawable/ic_attachment" />
 
         <ImageView
             android:id="@+id/send"

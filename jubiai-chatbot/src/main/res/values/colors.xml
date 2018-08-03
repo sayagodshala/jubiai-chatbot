@@ -130,6 +130,13 @@
     <color name="mat_icici_bub_sent">#FAFAFA</color>
     <color name="mat_icici_bub_rcvd">#f6f9fa</color>
     <color name="mat_icici_status_bar">#00aaa9</color>
+
+    <color name="mat_es">#1ed1e5</color>
+    <color name="mat_es_light">#4de5f5</color>
+    <color name="mat_es_dark">#169cab</color>
+    <color name="mat_es_bub_sent">#efefef</color>
+    <color name="mat_es_bub_rcvd">#f4f8f7</color>
+    <color name="mat_es_status_bar">#169cab</color>
     <!---->
 
 </resources>

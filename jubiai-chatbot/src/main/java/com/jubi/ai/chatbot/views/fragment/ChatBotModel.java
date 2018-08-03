@@ -76,6 +76,15 @@ public class ChatBotModel {
         return apiService.send(chatBotConfig.getPath(), chatBotConfig.getProjectId(), outgoingMessage);
     }
 
+    Observable<Response<BasicResponse>> pushImageMessage(String url) {
+        OutgoingMessage outgoingMessage = new OutgoingMessage();
+        outgoingMessage.setAndroidId(preferenceUtils.getFCMToken());
+        outgoingMessage.setProjectId(chatBotConfig.getProjectId());
+        outgoingMessage.setUrl(url);
+        outgoingMessage.setType("attachment");
+        return apiService.send(chatBotConfig.getPath(), chatBotConfig.getProjectId(), outgoingMessage);
+    }
+
 
     public ChatMessage makeChatFromMessage(String msg) {
         List<BotMessage> messages = new ArrayList<>();
@@ -197,15 +206,15 @@ public class ChatBotModel {
         return chatMessage;
     }
 
-    public ChatMessage cameraImageChatMessage(Uri uri) {
+    public ChatMessage cameraImageChatMessage(String url) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setProjectId(chatBotConfig.getProjectId());
         chatMessage.setWebId(chatBotConfig.getWebId());
         chatMessage.setAnswerType(AnswerType.TEXT.name());
-
+        chatMessage.setIncoming(false);
         List<BotMessage> botMessages = new ArrayList<>();
 
-        botMessages.add(new BotMessage(2, Type.IMAGE.name(), uri.getPath()));
+        botMessages.add(new BotMessage(2, Type.IMAGE.name(), url));
 
         chatMessage.setBotMessage(new Gson().toJson(botMessages));
 

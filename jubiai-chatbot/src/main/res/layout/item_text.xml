@@ -7,7 +7,7 @@
         android:id="@+id/received"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/message_received_bg"
         android:padding="16dp"
         android:text="Message Received"

@@ -57,7 +57,7 @@ public class ChatMessageOptionAdapter extends RecyclerView.Adapter<ChatMessageOp
         holder.option.setTag(R.id.chat, chat);
         holder.option.setTag(R.id.option, chatOption);
         holder.option.setOnClickListener(clickListener);
-        holder.option.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialTheme.getColor().getWhite()), context.getResources().getColor(materialTheme.getColor().getRegular()), true));
+        holder.option.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialTheme.getColor().getWhite()), context.getResources().getColor(materialTheme.getColor().getRegular()), true));
     }
 
     @Override

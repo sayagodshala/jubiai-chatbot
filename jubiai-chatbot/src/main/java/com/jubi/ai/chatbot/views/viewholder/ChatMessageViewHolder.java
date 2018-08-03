@@ -16,7 +16,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
     public TextView sent;
     public RelativeLayout sentCont;
     public ImageView image, brandLogo, senderPic, typing, arrowSent, arrowRcvd;
-    public LinearLayout fieldCont;
+    public LinearLayout fieldCont, sentFieldCont;
     public RecyclerView carouselCont;
     public RelativeLayout receivedView;
 
@@ -30,6 +30,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
             sentCont = itemView.findViewById(R.id.sent_cont);
             receivedView = itemView.findViewById(R.id.received_view);
             fieldCont = itemView.findViewById(R.id.field_cont);
+            sentFieldCont = itemView.findViewById(R.id.sent_field_cont);
             carouselCont = itemView.findViewById(R.id.carousel_cont);
             typing = itemView.findViewById(R.id.typing);
             arrowSent = itemView.findViewById(R.id.arrow_sent);

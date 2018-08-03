@@ -27,6 +27,7 @@ import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.viewModel.ChatMessageListViewModel;
 import com.jubi.ai.chatbot.views.adapter.ChatMessageAdapter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +76,10 @@ public class ChatBotPresenter {
         chatBotModel.insertChat(chatMessage);
     }
 
+    public void sendChat(ChatMessage chatMessage) {
+        chatBotModel.insertChat(chatMessage);
+    }
+
     public void setChatBotConfig(ChatBotConfig chatBotConfig) {
         chatBotModel.setChatBotConfig(chatBotConfig);
     }
@@ -89,6 +94,36 @@ public class ChatBotPresenter {
 
     public void pushMessage(String message) {
         compositeSubscription.add(chatBotModel.pushMessage(message)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<BasicResponse>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d("PushFCMToken", "completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("PushFCMToken", "onError " + e.getMessage());
+                        chatBotView.onMessagePushFailed(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Response<BasicResponse> response) {
+                        Log.d("PushFCMToken", "onNext " + response.code());
+                        if (response.code() == 200) {
+                            chatBotView.onMessagePushed();
+                        } else {
+                            BasicResponse basicResponse = Util.handleError(response.errorBody());
+                            chatBotView.onMessagePushFailed(basicResponse.getError());
+                        }
+                    }
+                }));
+
+    }
+
+    public void pushImageMessage(String url) {
+        compositeSubscription.add(chatBotModel.pushImageMessage(url)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Response<BasicResponse>>() {
@@ -185,8 +220,8 @@ public class ChatBotPresenter {
         }.start();
     }
 
-    public void cameraImageChatMessage(Uri uri) {
-        receiveChat(chatBotModel.cameraImageChatMessage(uri));
+    public void imageChatMessage(String url) {
+        sendChat(chatBotModel.cameraImageChatMessage(url));
     }
 
     public void startFakeTypingMessageListener() {

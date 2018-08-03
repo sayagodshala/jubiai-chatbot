@@ -5,6 +5,8 @@ public class OutgoingMessage {
     private String androidId;
     private String projectId;
     private String lastAnswer;
+    private String type = "attachment";
+    private String url;
 
     public OutgoingMessage() {
     }
@@ -37,5 +39,21 @@ public class OutgoingMessage {
 
     public void setLastAnswer(String lastAnswer) {
         this.lastAnswer = lastAnswer;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

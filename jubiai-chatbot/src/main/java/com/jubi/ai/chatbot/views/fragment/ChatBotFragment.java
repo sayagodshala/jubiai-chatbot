@@ -1,8 +1,10 @@
 package com.jubi.ai.chatbot.views.fragment;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -30,8 +32,18 @@ import android.widget.Button;
 
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.appunite.appunitevideoplayer.PlayerActivity;
 import com.google.gson.Gson;
 import com.jubi.ai.chatbot.BuildConfig;
 import com.jubi.ai.chatbot.R;
@@ -47,7 +59,10 @@ import com.jubi.ai.chatbot.models.ChatButton;
 import com.jubi.ai.chatbot.models.ChatOption;
 import com.jubi.ai.chatbot.models.WebViewData;
 import com.jubi.ai.chatbot.persistence.ChatMessage;
+import com.jubi.ai.chatbot.util.AWSUtil;
+import com.jubi.ai.chatbot.util.Constants;
 import com.jubi.ai.chatbot.util.CustomPopoverView;
+import com.jubi.ai.chatbot.util.FileAccessUtil;
 import com.jubi.ai.chatbot.util.ItemOffsetDecoration;
 import com.jubi.ai.chatbot.util.UiUtils;
 import com.jubi.ai.chatbot.util.Util;
@@ -62,6 +77,15 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.kbeanie.multipicker.api.CacheLocation;
+import com.kbeanie.multipicker.api.CameraImagePicker;
+import com.kbeanie.multipicker.api.FilePicker;
+import com.kbeanie.multipicker.api.ImagePicker;
+import com.kbeanie.multipicker.api.Picker;
+import com.kbeanie.multipicker.api.callbacks.FilePickerCallback;
+import com.kbeanie.multipicker.api.callbacks.ImagePickerCallback;
+import com.kbeanie.multipicker.api.entity.ChosenFile;
+import com.kbeanie.multipicker.api.entity.ChosenImage;
 import com.squareup.picasso.Picasso;
 import com.xw.repo.XEditText;
 
@@ -73,6 +97,9 @@ import net.gotev.speech.SpeechUtil;
 import net.gotev.speech.ui.SpeechProgressView;
 
 import java.io.File;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,11 +111,12 @@ import rx.subscriptions.CompositeSubscription;
 import static android.app.Activity.RESULT_OK;
 
 
-public class ChatBotFragment extends Fragment implements ChatBotView, View.OnClickListener, SpeechDelegate, PopupMenu.OnMenuItemClickListener {
+public class ChatBotFragment extends Fragment implements ChatBotView, View.OnClickListener, SpeechDelegate, PopupMenu.OnMenuItemClickListener, ImagePickerCallback, FilePickerCallback {
 
     public static final String TAG = "ChatBotFragment";
     private static final int REQ_CODE_SPEECH_INPUT = 1001;
     private static final int CAMERA_REQUEST = 1001;
+    private static final int GALLERY_REQUEST = 102;
 
     private Bundle bundle;
     public static String CHATBOT_CONFIG = "chatbot_config";
@@ -108,6 +136,11 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     private CompositeSubscription compositeSubscription;
     private boolean isAppJustOpened = true;
     private Uri cameraFile;
+    private ProgressDialog mDialog;
+    private AWSUtil awsUtil;
+    private ImagePicker imagePicker;
+    private FilePicker filePicker;
+    private String whichIntent = "";
 
     public ChatBotFragment() {
         // Required empty public constructor
@@ -143,8 +176,11 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
+        imagePicker = new ImagePicker(this);
+        awsUtil = new AWSUtil();
         compositeSubscription = new CompositeSubscription();
+
+        mDialog = new ProgressDialog(getActivity());
 
         view = inflater.inflate(R.layout.fragment_chat, container, false);
         bundle = getArguments();
@@ -153,7 +189,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         }
 
         chatBotPresenter = new ChatBotPresenter(this, new ChatBotModel(getActivity()));
-//        chatBotPresenter.setChatBotConfig(chatBotConfig);
 
         Log.d("AuthUISettings", new Gson().toJson(chatBotConfig));
         Log.d("SHA1", Util.getCertificateSHA1Fingerprint(getActivity()));
@@ -163,7 +198,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         setViewListeners();
         bindData();
         applyTheme();
-        pushMessage("get started");
+//        pushMessage("get started");
         return view;
     }
 
@@ -212,6 +247,8 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
         chatBotPresenter.enableDisableSend(send, false);
 
+        mute.setAlpha(0.3f);
+
         chatMessageAdapter = new ChatMessageAdapter(getActivity(), new ArrayList<ChatMessage>(), chatBotConfig.getMaterialTheme(), chatBotConfig.getAppLogo(), getScreenHeight());
         chatMessageAdapter.setItemClickListener(new IResultListener<View>() {
             @Override
@@ -225,14 +262,40 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                             case IMAGE:
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_VIEW);
-                                intent.setDataAndType(Uri.parse(botMessage.getValue()), "image/*");
+
+                                String path = botMessage.getValue();
+                                String ext = Util.getFileExtensionByUrl(path).toLowerCase();
+
+                                if (ext.contains("jpg")
+                                        || ext.contains("jpeg")
+                                        || ext.contains("png")) {
+                                    intent.setDataAndType(Uri.parse(path), "image/*");
+                                } else if (ext.contains("pdf")) {
+                                    intent.setDataAndType(Uri.parse(path), "application/pdf");
+                                } else if (ext.contains("ppt") || ext.contains("pptx")) {
+                                    intent.setDataAndType(Uri.parse(path), "application/vnd.ms-powerpoint");
+                                } else if (ext.contains("xls") || ext.contains("xlsx")) {
+                                    intent.setDataAndType(Uri.parse(path), "application/vnd.ms-excel");
+                                } else if (ext.contains("doc") || ext.contains(".docx")) {
+                                    intent.setDataAndType(Uri.parse(path), "application/msword");
+                                }
                                 startActivity(intent);
                                 break;
                             case BUTTON:
                                 break;
                             case VIDEO:
                                 Intent i = new Intent(getActivity(), WebViewActivity.class);
-                                i.putExtra(WebViewActivity.DATA, new WebViewData("", botMessage.getValue()));
+                                URL url = Util.checkURL(botMessage.getValue());
+                                if (url != null) {
+                                    if (url.getHost().contains("youtube") && !Util.textIsEmpty(url.getQuery())) {
+                                        String vId = url.getQuery().substring(url.getQuery().lastIndexOf("=") + 1);
+                                        i.putExtra(WebViewActivity.DATA, new WebViewData("", vId));
+                                    } else {
+                                        i = PlayerActivity.getVideoPlayerIntent(getActivity(),
+                                                botMessage.getValue(),
+                                                "Video");
+                                    }
+                                }
                                 startActivity(i);
                                 break;
                         }
@@ -312,21 +375,21 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
         switch (materialTheme) {
             case WHITE:
-                toolbar.setBackgroundDrawable(Util.selectorBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getLight()), false));
+                toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getLight()), false));
                 title.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 send.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
                 mic.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
-                submit.setBackgroundDrawable(Util.selectorRoundedBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getDark()), false));
+                submit.setBackground(Util.selectorRoundedBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getDark()), false));
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getPrimaryText()), android.graphics.PorterDuff.Mode.SRC_IN);
                 camera.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
                 break;
             default:
-                toolbar.setBackgroundDrawable(Util.selectorBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
+                toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
                 title.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 send.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
                 mic.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
-                submit.setBackgroundDrawable(Util.selectorRoundedBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
+                submit.setBackground(Util.selectorRoundedBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getWhite()), android.graphics.PorterDuff.Mode.SRC_IN);
                 camera.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -336,6 +399,10 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     private void pushMessage(String msg) {
         chatBotPresenter.pushMessage(msg);
+    }
+
+    private void pushFileMessage(String url) {
+        chatBotPresenter.pushImageMessage(url);
     }
 
     @Override
@@ -379,7 +446,8 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     public void onChatViewModelUpdate(List<ChatMessage> chatMessages) {
         if (chatMessages.size() == 0) {
             showNoChatMessagesView();
-            chatBotPresenter.startFakeTypingMessageListener();
+//            chatBotPresenter.startFakeTypingMessageListener();
+            pushMessage("get started");
         } else {
             final ChatMessage chatMessage = chatMessages.get(chatMessages.size() - 1);
 
@@ -403,40 +471,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
             chatMessageAdapter.addItems(chatMessages);
             recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
-
-//            if (chatMessage.isPersist()) {
-//                switch (chat.getAnswerType()) {
-//                    case PERSIST_OPTION:
-//                        ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(getActivity(), R.dimen.item_offset);
-//                        ChatMessageOptionAdapter chatMessageOptionAdapter = new ChatMessageOptionAdapter(getActivity(), new ArrayList<ChatOption>(), chatBotConfig.getMaterialTheme());
-//                        chatMessageOptionAdapter.setItemClickListener(new IResultListener<View>() {
-//                            @Override
-//                            public void onResult(View view) {
-//                                if (view.getTag() != null) {
-//                                    if (view.getTag() instanceof ChatOption) {
-//                                        ChatOption chatOption = (ChatOption) view.getTag();
-//                                        chatMessage.setPersist(false);
-//                                        chatBotPresenter.updateChat(chatMessage);
-//                                        chatBotPresenter.sendSelectedOption(chatOption);
-//
-//                                    }
-//                                }
-//                            }
-//                        });
-//                        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-//                        persistOption.setLayoutManager(gridLayoutManager);
-//                        persistOption.setAdapter(chatMessageOptionAdapter);
-//                        chatMessageOptionAdapter.addItems(chat.getOptions());
-//                        persistOption.addItemDecoration(itemDecoration);
-//                        persistOption.setVisibility(View.VISIBLE);
-//                        break;
-//                    default:
-//
-//                        break;
-//                }
-//            } else {
-//
-//            }
             if (empty.getVisibility() == View.VISIBLE)
                 empty.setVisibility(View.GONE);
         }
@@ -477,35 +511,12 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 UiUtils.showSnackbar(getActivity().findViewById(android.R.id.content), "Sound for speech is muted", Snackbar.LENGTH_SHORT);
             }
         } else if (view.getId() == R.id.camera) {
-            Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
-                @Override
-                public void onPermissionsChecked(MultiplePermissionsReport report) {
-                    if (report.areAllPermissionsGranted()) {
-                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                        StrictMode.setVmPolicy(builder.build());
-                        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                        cameraFile = FileProvider.getUriForFile(getActivity(),
-//                                BuildConfig.APPLICATION_ID + ".provider",
-//                                getOutputMediaFile());
-//                        cameraFile = Uri.fromFile(getOutputMediaFile());
+            whichIntent = "";
+            PopupMenu popup = new PopupMenu(getActivity(), camera);
+            popup.setOnMenuItemClickListener(this);
+            popup.inflate(R.menu.attachment);
+            popup.show();
 
-                        String fileName = BuildConfig.APPLICATION_ID + "_"
-                                + String.valueOf(System.currentTimeMillis()) + ".jpg";
-                        cameraFile = Uri.fromFile(new File(Environment
-                                .getExternalStorageDirectory()
-                                + "/"
-                                + BuildConfig.APPLICATION_ID, fileName));
-
-                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraFile);
-                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                    }
-                }
-
-                @Override
-                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                    token.continuePermissionRequest();
-                }
-            }).check();
         } else if (view.getId() == R.id.menu) {
             PopupMenu popup = new PopupMenu(getActivity(), menu);
             popup.setOnMenuItemClickListener(this);
@@ -519,34 +530,33 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST) {
+        Log.d("onActivityResult", requestCode + " - " + resultCode + " - " + data);
+        if (!Util.textIsEmpty(whichIntent) && whichIntent.equalsIgnoreCase("camera")) {
             File file = new File(cameraFile.getPath());
             if (file.exists()) {
-                pushMessage("Image Uploaded");
-                chatBotPresenter.cameraImageChatMessage(cameraFile);
+                uploadWithTransferUtility(file);
             } else {
-                //UiUtils.showToast(getActivity(), "Some problem occurred while capturing picture!");
+                UiUtils.showToast(getActivity(), "Some problem occurred while capturing picture!");
             }
-
-        }
-    }
-
-    private File getOutputMediaFile() {
-
-        String folderName = getString(R.string.app_name);
-
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), folderName);
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
+        } else if (!Util.textIsEmpty(whichIntent) && (whichIntent.equalsIgnoreCase("gallery") || whichIntent.equalsIgnoreCase("document")) && resultCode == -1 && data != null) {
+            String realPath = FileAccessUtil.getPathFromUri(getActivity(), data.getData());
+            if (!Util.textIsEmpty(realPath)) {
+                File file = new File(realPath);
+                if (file.exists()) {
+                    uploadWithTransferUtility(file);
+                } else {
+                    UiUtils.showToast(getActivity(), "Some problem occurred while selecting document!");
+                }
+            } else {
+                if (data.getData().toString().contains("google.android.apps.docs")) {
+                    UiUtils.showToast(getActivity(), "Some problem occurred while selecting google drive document");
+                } else {
+                    UiUtils.showToast(getActivity(), "Some problem occurred while selecting document");
+                }
             }
+        } else {
+            UiUtils.showToast(getActivity(), "Some thing went wrong");
         }
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        return new File(mediaStorageDir.getPath() + File.separator +
-                "IMG_" + timeStamp + ".jpg");
     }
 
     protected int getScreenHeight() {
@@ -565,61 +575,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         } catch (GoogleVoiceTypingDisabledException e) {
             enableGoogleVoiceTyping();
         }
-
-//        try {
-//            // you must have android.permission.RECORD_AUDIO granted at this point
-//
-//            Speech.getInstance().startListening(speechProgress, new SpeechDelegate() {
-//                @Override
-//                public void onStartOfSpeech() {
-//                    Log.i("speech", "speech recognition is now active");
-//                }
-//
-//                @Override
-//                public void onSpeechRmsChanged(float value) {
-//                    Log.d("speech", "rms is now: " + value);
-//                }
-//
-//                @Override
-//                public void onSpeechPartialResults(List<String> results) {
-//                    StringBuilder str = new StringBuilder();
-//                    for (String res : results) {
-//                        str.append(res).append(" ");
-//                    }
-//
-//                    Log.i("speech", "partial result: " + str.toString().trim());
-//                }
-//
-//                @Override
-//                public void onSpeechResult(String result) {
-//                    Log.i("speech", "result: " + result);
-//                    speechCont.setVisibility(View.GONE);
-//                    if (!Util.textIsEmpty(result)) {
-//                        sendChat(result);
-//                    } else {
-//                        if (result.isEmpty()) {
-//                            Speech.getInstance().say("Pardon please!");
-//                        } else {
-//                            Speech.getInstance().say(result);
-//                        }
-//                    }
-//                }
-//            });
-//        } catch (SpeechRecognitionNotAvailable exc) {
-//            Log.e("speech", "Speech recognition is not available on this device!");
-//            // You can prompt the user if he wants to install Google App to have
-//            // speech recognition, and then you can simply call:
-//            //
-//            // SpeechUtil.redirectUserToGoogleAppOnPlayStore(this);
-//            //
-//            // to redirect the user to the Google App page on Play Store
-//        } catch (GoogleVoiceTypingDisabledException exc) {
-//            Log.e("speech", "Google voice typing must be enabled!");
-//        }
-    }
-
-    private void showSpeechNotSupportedDialog() {
-
     }
 
     @Override
@@ -724,10 +679,184 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         } else if (item.getItemId() == R.id.cancel) {
             pushMessage("cancel");
             return true;
+        } else if (item.getItemId() == R.id.camera) {
+            Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                @Override
+                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                    if (report.areAllPermissionsGranted()) {
+                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                        StrictMode.setVmPolicy(builder.build());
+                        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                        cameraFile = FileProvider.getUriForFile(getActivity(),
+//                                BuildConfig.APPLICATION_ID + ".provider",
+//                                getOutputMediaFile());
+//                        cameraFile = Uri.fromFile(getOutputMediaFile());
+
+                        whichIntent = "camera";
+
+                        String fileName = BuildConfig.APPLICATION_ID + "_"
+                                + String.valueOf(System.currentTimeMillis()) + ".jpg";
+                        cameraFile = Uri.fromFile(new File(Environment
+                                .getExternalStorageDirectory()
+                                + "/"
+                                + BuildConfig.APPLICATION_ID, fileName));
+
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraFile);
+                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                    }
+                }
+
+                @Override
+                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                    token.continuePermissionRequest();
+                }
+            }).check();
+            return true;
+        } else if (item.getItemId() == R.id.gallery) {
+            Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                @Override
+                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                    if (report.areAllPermissionsGranted()) {
+                        whichIntent = "gallery";
+                        pickImageSingle();
+                    }
+                }
+
+                @Override
+                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                    token.continuePermissionRequest();
+                }
+            }).check();
+            return true;
+        } else if (item.getItemId() == R.id.document) {
+            Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                @Override
+                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                    if (report.areAllPermissionsGranted()) {
+                        whichIntent = "document";
+                        pickFilesSingle();
+                    }
+                }
+
+                @Override
+                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                    token.continuePermissionRequest();
+                }
+            }).check();
+            return true;
         } else {
             pushMessage("talk to agent");
             return true;
         }
     }
 
+    private void uploadWithTransferUtility(final File file) {
+        setProgressDialog("Uploading", "Uploading dialog");
+        final String extension = file.getName().substring(file.getName().lastIndexOf("."));
+        final String fileName = System.currentTimeMillis() + extension;
+        final String absoluteFileName = "https://s3.ap-south-1.amazonaws.com/mobile-dev-jubi/" + fileName;
+
+        TransferUtility transferUtility = awsUtil.getTransferUtility(getActivity());
+
+        TransferObserver uploadObserver =
+                transferUtility.upload(
+                        Constants.AWS.BUCKET_NAME, fileName, file, CannedAccessControlList.PublicRead);
+
+        Log.d("AWSConfiguration path", uploadObserver.getAbsoluteFilePath());
+
+        // Attach a listener to the observer to get state update and progress notifications
+        uploadObserver.setTransferListener(new TransferListener() {
+
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                switch (state) {
+                    case COMPLETED:
+                        mDialog.dismiss();
+                        chatBotPresenter.imageChatMessage(absoluteFileName);
+                        pushFileMessage(absoluteFileName);
+                        break;
+                    case FAILED:
+                        mDialog.dismiss();
+                        break;
+                }
+                Log.d("AWSFileUpload Stats", state.name() + " - " + id);
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
+                int percentDone = (int) percentDonef;
+
+                mDialog.setProgress(percentDone);
+
+                Log.d("AWSFileUpload Prog", "ID:" + id + " bytesCurrent: " + bytesCurrent
+                        + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                // Handle errors
+                Log.d("AWSFileUpload Exc", ex.getMessage());
+            }
+
+        });
+
+        // If you prefer to poll for the data, instead of attaching a
+        // listener, check for the state and progress in the observer.
+        if (TransferState.COMPLETED == uploadObserver.getState()) {
+            // Handle a completed upload.
+        }
+
+        Log.d("YourActivity", "Bytes Transferrred: " + uploadObserver.getBytesTransferred());
+        Log.d("YourActivity", "Bytes Total: " + uploadObserver.getBytesTotal());
+    }
+
+    public void setProgressDialog(String title, String message) {
+        mDialog.setIndeterminate(true);
+        mDialog.setCancelable(false);
+        mDialog.setTitle(title);
+        mDialog.setMessage(message);
+        mDialog.show();
+    }
+
+    public void pickImageSingle() {
+        imagePicker = new ImagePicker(this);
+        imagePicker.setDebugglable(true);
+        imagePicker.setFolderName("Random");
+        imagePicker.ensureMaxSize(500, 500);
+        imagePicker.shouldGenerateMetadata(true);
+        imagePicker.shouldGenerateThumbnails(true);
+        imagePicker.setImagePickerCallback(this);
+        Bundle bundle = new Bundle();
+        bundle.putInt("android.intent.extras.CAMERA_FACING", 1);
+        imagePicker.setCacheLocation(CacheLocation.EXTERNAL_STORAGE_PUBLIC_DIR);
+        imagePicker.pickImage();
+    }
+
+    private void pickFilesSingle() {
+        filePicker = getFilePicker();
+        filePicker.setMimeType("application/*");
+        filePicker.pickFile();
+    }
+
+    private FilePicker getFilePicker() {
+        filePicker = new FilePicker(this);
+        filePicker.setFilePickerCallback(this);
+        return filePicker;
+    }
+
+    @Override
+    public void onImagesChosen(List<ChosenImage> list) {
+
+    }
+
+    @Override
+    public void onError(String s) {
+        UiUtils.showToast(getActivity(), s);
+    }
+
+    @Override
+    public void onFilesChosen(List<ChosenFile> list) {
+
+    }
 }

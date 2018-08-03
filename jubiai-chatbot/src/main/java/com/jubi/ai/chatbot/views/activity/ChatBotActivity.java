@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
 import com.fujiyuu75.sequent.Animation;
 import com.fujiyuu75.sequent.Direction;
 import com.fujiyuu75.sequent.Sequent;
@@ -54,7 +56,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         setContentView(R.layout.activity_chatbot);
 
         chatBotConfig = new ChatBotConfig();
-
+        AWSMobileClient.getInstance().initialize(this).execute();
         Speech.init(this, getPackageName());
         Speech.getInstance().setLocale(new Locale("en_IN"));
         Logger.setLogLevel(Logger.LogLevel.DEBUG);
@@ -196,6 +198,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ChatBotFragment.TAG);
         super.onActivityResult(requestCode, resultCode, data);
     }
 

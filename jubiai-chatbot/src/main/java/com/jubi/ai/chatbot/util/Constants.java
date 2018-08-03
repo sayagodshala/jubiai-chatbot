@@ -20,4 +20,12 @@ public class Constants {
         int UNAUTHORIZED = 401;
         int NOT_FOUND = 404;
     }
+
+    public interface AWS{
+        public String COGNITO_POOL_ID = "ap-south-1:392c5499-a210-4b1d-b55a-b170cd1cd7fa";
+        public String COGNITO_POOL_REGION = "ap-south-1";
+        public String BUCKET_REGION = "ap-south-1";
+        public String BUCKET_NAME = "mobile-dev-jubi";
+
+    }
 }

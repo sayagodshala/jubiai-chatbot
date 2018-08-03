@@ -21,7 +21,8 @@ public enum MaterialTheme {
     DEFAULT(MaterialColor.WHITE),
     CUSTOM(MaterialColor.WHITE),
     RELIANCE(MaterialColor.RELIANCE),
-    ICICI(MaterialColor.ICICI);
+    ICICI(MaterialColor.ICICI),
+    EARLY_SALARY(MaterialColor.EARLY_SALARY);
 
     public MaterialColor color;
 

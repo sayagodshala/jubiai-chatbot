@@ -20,9 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.jubi.ai.chatbot.R;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.listeners.IResultListener;
+import com.jubi.ai.chatbot.util.BitmapTransform;
 import com.jubi.ai.chatbot.util.ItemOffsetDecoration;
 import com.jubi.ai.chatbot.enums.MaterialColor;
 import com.jubi.ai.chatbot.models.BotMessage;
@@ -34,6 +36,8 @@ import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.viewholder.ChatMessageViewHolder;
 import com.squareup.picasso.Picasso;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -115,7 +119,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                             view = (View) layoutInflater.inflate(R.layout.item_text, null);
                             TextView textView = view.findViewById(R.id.received);
                             textView.setText(botMessage.getValue());
-                            textView.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            textView.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
                             textView.setTextColor(context.getResources().getColor(materialColor.getBlack()));
                             holder.fieldCont.addView(view);
                         }
@@ -126,13 +130,17 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                         if (!Util.textIsEmpty(botMessage.getValue())) {
                             view = (View) layoutInflater.inflate(R.layout.item_image, null);
                             ImageView imageView = view.findViewById(R.id.image);
-                            imageView.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                            if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://"))
-                                Picasso.with(context).load(botMessage.getValue()).into(imageView);
-                            else
+                            LinearLayout imageCont = view.findViewById(R.id.image_cont);
+                            imageCont.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://")) {
+                                if (Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("gif")) {
+                                    Glide.with(context).asGif().load(botMessage.getValue()).into(imageView);
+                                } else {
+                                    Picasso.with(context).load(botMessage.getValue()).into(imageView);
+                                }
+                            } else {
                                 Picasso.with(context).load(Uri.parse("file://" + botMessage.getValue())).into(imageView);
-//                        Glide.with(context).load(botMessage.getValue()).into(imageView);
-                            view.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            }
                             imageView.setTag(botMessage);
                             imageView.setOnClickListener(clickListener);
                             holder.fieldCont.addView(view);
@@ -142,43 +150,18 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                         if (!Util.textIsEmpty(botMessage.getValue())) {
                             view = (View) layoutInflater.inflate(R.layout.item_youtube, null);
                             ImageView iv = view.findViewById(R.id.image);
-                            iv.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                            Picasso.with(context).load("https://i.ytimg.com/vi/" + botMessage.getValue() + "/hqdefault.jpg").into(iv);
-//                        Glide.with(context).load(botMessage.getValue()).into(imageView);
-                            view.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            iv.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            view.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
                             iv.setTag(botMessage);
+                            URL url = Util.checkURL(botMessage.getValue());
+                            if (url != null) {
+                                if (url.getHost().contains("youtube") && !Util.textIsEmpty(url.getQuery())) {
+                                    String vId = url.getQuery().substring(url.getQuery().lastIndexOf("=") + 1);
+                                    Picasso.with(context).load("https://i.ytimg.com/vi/" + vId + "/hqdefault.jpg").into(iv);
+                                }
+                            }
                             iv.setOnClickListener(clickListener);
                             holder.fieldCont.addView(view);
-//                        view = (View) layoutInflater.inflate(R.layout.item_youtube_thumbnail, null);
-//                        YouTubeThumbnailView thumbnail = (YouTubeThumbnailView) view.findViewById(R.id.thumbnail);
-//                        final YouTubeThumbnailLoader[] youTubeThumbnailLoader = new YouTubeThumbnailLoader[1];
-//                        thumbnail.setTag(botMessage.getValue());
-//                        thumbnail.initialize(Constants.Key.YOUTUBE, new YouTubeThumbnailView.OnInitializedListener() {
-//                            @Override
-//                            public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader loader) {
-//                                youTubeThumbnailView.setImageResource(R.mipmap.loading_thumbnail);
-//                                Log.d("onInitializationSuccess", loader.toString());
-//                                youTubeThumbnailLoader[0].setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
-//                                    @Override
-//                                    public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-//                                        Log.d("onThumbnailLoaded", s);
-//                                    }
-//
-//                                    @Override
-//                                    public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
-//                                        Log.d("onThumbnailError", errorReason.name());
-//                                    }
-//                                });
-//                                youTubeThumbnailLoader[0] = loader;
-//                                youTubeThumbnailLoader[0].setVideo(String.valueOf(youTubeThumbnailView.getTag()));
-//                            }
-//
-//                            @Override
-//                            public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
-//                                Log.d("onInitializationFailure", youTubeInitializationResult.name());
-//                            }
-//                        });
-//                        holder.fieldCont.addView(view);
                         }
                         break;
                 }
@@ -249,7 +232,55 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
             }
 
         } else {
-            holder.sent.setText(botMessages.get(0).getValue());
+            for (int i = 0; i < botMessages.size(); i++) {
+                final BotMessage botMessage = botMessages.get(i);
+                switch (botMessage.getType()) {
+                    case TEXT:
+                        if (!Util.textIsEmpty(botMessage.getValue())) {
+//                            view = (View) layoutInflater.inflate(R.layout.item_text, null);
+//                            TextView textView = view.findViewById(R.id.received);
+//                            textView.setText(botMessage.getValue());
+//                            textView.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+//                            textView.setTextColor(context.getResources().getColor(materialColor.getBlack()));
+//                            holder.sentFieldCont.addView(view);
+//                            holder.sentFieldCont.setVisibility(View.VISIBLE);
+                            holder.sent.setText(botMessage.getValue());
+                            holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
+                            holder.sent.setTextColor(context.getResources().getColor(materialColor.getBlack()));
+                        }
+                        break;
+                    case IMAGE:
+                        if (!Util.textIsEmpty(botMessage.getValue())) {
+                            holder.sent.setVisibility(View.GONE);
+                            view = (View) layoutInflater.inflate(R.layout.item_image, null);
+                            ImageView imageView = view.findViewById(R.id.image);
+                            LinearLayout imageCont = view.findViewById(R.id.image_cont);
+                            imageCont.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getRegular()), false));
+                            if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://")) {
+//                                Picasso.with(context).load(botMessage.getValue()).resize(500, 360).transform(new BitmapTransform()).centerCrop().onlyScaleDown().into(imageView);
+                                if (Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("jpg")
+                                        || Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("jpeg")
+                                        || Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("png")) {
+                                    Picasso.with(context).load(botMessage.getValue()).placeholder(R.drawable.placeholder).into(imageView);
+                                } else {
+                                    imageView.setImageResource(R.drawable.pdf);
+//                                    Picasso.with(context).load(botMessage.getValue()).placeholder(R.drawable.pdf).into(imageView);
+                                }
+                            }
+
+                            imageView.setTag(botMessage);
+                            imageView.setOnClickListener(clickListener);
+                            holder.sentFieldCont.addView(view);
+                            holder.sentFieldCont.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                }
+            }
+//            if (holder.sentFieldCont.getVisibility() == View.GONE) {
+//                holder.sent.setText(botMessages.get(0).getValue());
+//            } else {
+//                holder.sent.setVisibility(View.GONE);
+//            }
             holder.receivedView.setVisibility(View.GONE);
         }
 //        holder.brandLogo.setImageResource(appLogo);
@@ -275,11 +306,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
 //                holder.brandLogo.setBackgroundDrawable(Util.drawCircle(context.getResources().getColor(materialColor.getDark())));
                 holder.arrowSent.setColorFilter(ContextCompat.getColor(context, materialColor.getLight()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
-                holder.sent.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getLight()), context.getResources().getColor(materialColor.getLight()), false));
+                holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getLight()), context.getResources().getColor(materialColor.getLight()), false));
                 holder.sent.setTextColor(context.getResources().getColor(materialColor.getBlack()));
                 break;
             default:
-                holder.sent.setBackgroundDrawable(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getRegular()), false));
+                holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getRegular()), false));
                 holder.sent.setTextColor(context.getResources().getColor(materialColor.getWhite()));
                 holder.arrowSent.setColorFilter(ContextCompat.getColor(context, materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
