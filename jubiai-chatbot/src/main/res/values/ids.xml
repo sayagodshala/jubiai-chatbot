@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="chat" type="id"></item>
-    <item name="option_id" type="id"></item>
-    <item name="sub_option_id" type="id"></item>
-    <item name="option" type="id"></item>
+    <item name="chat" type="id"/>
+    <item name="option_id" type="id"/>
+    <item name="sub_option_id" type="id"/>
+    <item name="option" type="id"/>
 </resources>
