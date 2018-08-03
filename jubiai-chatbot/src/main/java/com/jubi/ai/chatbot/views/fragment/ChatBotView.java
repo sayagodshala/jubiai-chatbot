@@ -16,8 +16,6 @@ public interface ChatBotView {
 
     void onMessagePushFailed(String message);
 
-    void sendChat(String message);
-
     void onChatViewModelUpdate(List<ChatMessage> chatMessages);
 
 }

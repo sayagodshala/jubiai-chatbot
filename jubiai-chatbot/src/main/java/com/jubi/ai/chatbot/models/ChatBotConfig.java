@@ -22,9 +22,10 @@ public class ChatBotConfig implements Parcelable {
     private boolean saveChat = true;
     private String regularColor = null;
     private String host = null;
-    private String path = null;
+    private String path = "android";
     private String fcmToken;
-    private boolean imageUpload = false;
+    private boolean speechRequired = false;
+    private boolean attachmentRequired = true;
 
     public ChatBotConfig() {
     }
@@ -109,14 +110,6 @@ public class ChatBotConfig implements Parcelable {
         this.path = path;
     }
 
-    public boolean isImageUpload() {
-        return imageUpload;
-    }
-
-    public void setImageUpload(boolean imageUpload) {
-        this.imageUpload = imageUpload;
-    }
-
     public void setCustomTheme() {
         materialTheme = MaterialTheme.CUSTOM;
         MaterialColor materialColor = materialTheme.getColor();
@@ -150,6 +143,22 @@ public class ChatBotConfig implements Parcelable {
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
+    }
+
+    public boolean isSpeechRequired() {
+        return speechRequired;
+    }
+
+    public void setSpeechRequired(boolean speechRequired) {
+        this.speechRequired = speechRequired;
+    }
+
+    public boolean isAttachmentRequired() {
+        return attachmentRequired;
+    }
+
+    public void setAttachmentRequired(boolean attachmentRequired) {
+        this.attachmentRequired = attachmentRequired;
     }
 
     public final static class Builder {
@@ -189,7 +198,8 @@ public class ChatBotConfig implements Parcelable {
         dest.writeString(this.host);
         dest.writeString(this.path);
         dest.writeString(this.fcmToken);
-        dest.writeByte(this.imageUpload ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.speechRequired ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.attachmentRequired ? (byte) 1 : (byte) 0);
     }
 
     protected ChatBotConfig(Parcel in) {
@@ -203,7 +213,8 @@ public class ChatBotConfig implements Parcelable {
         this.host = in.readString();
         this.path = in.readString();
         this.fcmToken = in.readString();
-        this.imageUpload = in.readByte() != 0;
+        this.speechRequired = in.readByte() != 0;
+        this.attachmentRequired = in.readByte() != 0;
     }
 
     public static final Creator<ChatBotConfig> CREATOR = new Creator<ChatBotConfig>() {

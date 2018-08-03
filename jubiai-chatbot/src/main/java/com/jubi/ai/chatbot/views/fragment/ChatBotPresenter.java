@@ -80,18 +80,6 @@ public class ChatBotPresenter {
         chatBotModel.insertChat(chatMessage);
     }
 
-    public void setChatBotConfig(ChatBotConfig chatBotConfig) {
-        chatBotModel.setChatBotConfig(chatBotConfig);
-    }
-
-    public void isGCMTokenSaved() {
-        if (!chatBotModel.isGCMTokenSaved()) {
-            chatBotView.showFCMNotSyncView();
-        } else {
-            chatBotView.showNoChatMessagesView();
-        }
-    }
-
     public void pushMessage(String message) {
         compositeSubscription.add(chatBotModel.pushMessage(message)
                 .subscribeOn(Schedulers.io())
@@ -154,12 +142,6 @@ public class ChatBotPresenter {
 
     public void clear() {
         compositeSubscription.clear();
-    }
-
-    public void onSendClick(String message) {
-        if (!Util.textIsEmpty(message)) {
-            chatBotView.sendChat(message);
-        }
     }
 
     public void bindViewModel(FragmentActivity fragmentActivity, LifecycleOwner owner) {

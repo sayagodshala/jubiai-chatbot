@@ -124,7 +124,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     private View view;
     private XEditText message;
-    private ImageView send, back, hideChat, mic, mute, camera, menu;
+    private ImageView send, back, hideChat, mic, mute, attachment, menu;
     private TextView title, headline, info;
     private LinearLayout toolbar, empty, speechCont;
     private RecyclerView recyclerView, persistOption;
@@ -240,7 +240,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         headline = view.findViewById(R.id.headline);
         info = view.findViewById(R.id.info);
         submit = view.findViewById(R.id.submit);
-        camera = view.findViewById(R.id.camera);
+        attachment = view.findViewById(R.id.attachment);
         hideChat = view.findViewById(R.id.hide_chat);
         persistOption = view.findViewById(R.id.persist_option);
         menu = view.findViewById(R.id.menu);
@@ -312,7 +312,8 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
         hideChat.setVisibility(View.GONE);
 
-        camera.setVisibility(chatBotConfig.isImageUpload() ? View.VISIBLE : View.GONE);
+        attachment.setVisibility(chatBotConfig.isAttachmentRequired() ? View.VISIBLE : View.GONE);
+        mic.setVisibility(chatBotConfig.isSpeechRequired() ? View.VISIBLE : View.GONE);
 
     }
 
@@ -322,7 +323,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         back.setOnClickListener(this);
         hideChat.setOnClickListener(this);
         mute.setOnClickListener(this);
-        camera.setOnClickListener(this);
+        attachment.setOnClickListener(this);
         menu.setOnClickListener(this);
         chatBotPresenter.onInputMessageChangeListener(message, send);
 
@@ -382,7 +383,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 submit.setBackground(Util.selectorRoundedBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getDark()), false));
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getPrimaryText()), android.graphics.PorterDuff.Mode.SRC_IN);
-                camera.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
+                attachment.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
                 break;
             default:
                 toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
@@ -392,7 +393,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 submit.setBackground(Util.selectorRoundedBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getWhite()), android.graphics.PorterDuff.Mode.SRC_IN);
-                camera.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
+                attachment.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
                 break;
         }
     }
@@ -434,19 +435,9 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     }
 
     @Override
-    public void sendChat(String msg) {
-        chatBotPresenter.sendChat(msg);
-        message.setText("");
-//        recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
-//        chatBotPresenter.startFakeIncomingMessageListener(msg);
-        chatBotPresenter.startFakeTypingMessageListener();
-    }
-
-    @Override
     public void onChatViewModelUpdate(List<ChatMessage> chatMessages) {
         if (chatMessages.size() == 0) {
             showNoChatMessagesView();
-//            chatBotPresenter.startFakeTypingMessageListener();
             pushMessage("get started");
         } else {
             final ChatMessage chatMessage = chatMessages.get(chatMessages.size() - 1);
@@ -479,7 +470,9 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.send) {
-            chatBotPresenter.onSendClick(message.getText().toString());
+            chatBotPresenter.sendChat(message.getText().toString());
+            message.setText("");
+            chatBotPresenter.startFakeTypingMessageListener();
         } else if (view.getId() == R.id.hide_chat) {
             mListener.onHideChat();
         } else if (view.getId() == R.id.mic) {
@@ -510,9 +503,9 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 mute.setAlpha(0.3f);
                 UiUtils.showSnackbar(getActivity().findViewById(android.R.id.content), "Sound for speech is muted", Snackbar.LENGTH_SHORT);
             }
-        } else if (view.getId() == R.id.camera) {
+        } else if (view.getId() == R.id.attachment) {
             whichIntent = "";
-            PopupMenu popup = new PopupMenu(getActivity(), camera);
+            PopupMenu popup = new PopupMenu(getActivity(), attachment);
             popup.setOnMenuItemClickListener(this);
             popup.inflate(R.menu.attachment);
             popup.show();
@@ -597,7 +590,9 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         speechCont.setVisibility(View.GONE);
         mic.setVisibility(View.VISIBLE);
         if (!Util.textIsEmpty(result)) {
-            sendChat(result);
+            chatBotPresenter.sendChat(message.getText().toString());
+            message.setText("");
+            chatBotPresenter.startFakeTypingMessageListener();
         } else {
             if (result.isEmpty()) {
                 Speech.getInstance().say("Pardon please!");
@@ -661,20 +656,11 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         customPopoverView.show();
     }
 
-    public static boolean checkAlphabetic(String input) {
-        for (int i = 0; i != input.length(); ++i) {
-            if (!Character.isLetterOrDigit(input.charAt(i))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.start_over) {
             pushMessage("get started");
+            chatBotPresenter.startFakeTypingMessageListener();
             return true;
         } else if (item.getItemId() == R.id.cancel) {
             pushMessage("cancel");
@@ -687,10 +673,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                         StrictMode.setVmPolicy(builder.build());
                         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                        cameraFile = FileProvider.getUriForFile(getActivity(),
-//                                BuildConfig.APPLICATION_ID + ".provider",
-//                                getOutputMediaFile());
-//                        cameraFile = Uri.fromFile(getOutputMediaFile());
 
                         whichIntent = "camera";
 

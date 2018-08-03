@@ -237,13 +237,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                 switch (botMessage.getType()) {
                     case TEXT:
                         if (!Util.textIsEmpty(botMessage.getValue())) {
-//                            view = (View) layoutInflater.inflate(R.layout.item_text, null);
-//                            TextView textView = view.findViewById(R.id.received);
-//                            textView.setText(botMessage.getValue());
-//                            textView.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-//                            textView.setTextColor(context.getResources().getColor(materialColor.getBlack()));
-//                            holder.sentFieldCont.addView(view);
-//                            holder.sentFieldCont.setVisibility(View.VISIBLE);
                             holder.sent.setText(botMessage.getValue());
                             holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
                             holder.sent.setTextColor(context.getResources().getColor(materialColor.getBlack()));
@@ -276,15 +269,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                         break;
                 }
             }
-//            if (holder.sentFieldCont.getVisibility() == View.GONE) {
-//                holder.sent.setText(botMessages.get(0).getValue());
-//            } else {
-//                holder.sent.setVisibility(View.GONE);
-//            }
             holder.receivedView.setVisibility(View.GONE);
         }
-//        holder.brandLogo.setImageResource(appLogo);
-
         applyTheme(holder);
     }
 

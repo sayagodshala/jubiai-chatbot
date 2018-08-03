@@ -37,11 +37,11 @@
             android:id="@+id/typing"
             android:layout_width="50dp"
             android:layout_height="31dp"
-            android:layout_marginLeft="4dp"
+            android:layout_marginLeft="-8dp"
             android:layout_toRightOf="@+id/arrow_rcvd"
             android:padding="6dp"
             android:src="@drawable/dots"
-            android:visibility="gone" />
+             />
 
         <!--android:layout_marginRight="24dp"-->
         <LinearLayout

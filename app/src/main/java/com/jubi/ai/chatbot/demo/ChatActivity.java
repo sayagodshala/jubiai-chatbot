@@ -66,16 +66,15 @@ public class ChatActivity extends AppCompatActivity {
 
     private ChatBotConfig chatBotConfig() {
         ChatBotConfig chatBotConfig = new ChatBotConfig();
-        chatBotConfig.setAppLogo(R.drawable.ic_company_logo);
+        chatBotConfig.setAppLogo(R.drawable.ic_early_salary_logo);
         chatBotConfig.setMaterialTheme(MaterialTheme.EARLY_SALARY);
         chatBotConfig.setTitle("Earl");
-//        chatBotConfig.setProjectId("JUBIzMjyA_Julia");
-//        chatBotConfig.setProjectId("JUBI15Q9uk_EarlySalaryFAQ");
         chatBotConfig.setProjectId("JUBIglSWd_Prudential");
-//        chatBotConfig.setHost("https://hdfc-backend.herokuapp.com");
-        chatBotConfig.setPath("android");
         chatBotConfig.setHost("https://prudential-backend.herokuapp.com");
-        chatBotConfig.setImageUpload(true);
+//        attachment by default is true
+//        chatBotConfig.setAttachmentRequired(false);
+//        speech by default is false
+//        chatBotConfig.setSpeechRequired(true);
         chatBotConfig.setFcmToken(FirebaseInstanceId.getInstance().getToken());
         return chatBotConfig;
     }
