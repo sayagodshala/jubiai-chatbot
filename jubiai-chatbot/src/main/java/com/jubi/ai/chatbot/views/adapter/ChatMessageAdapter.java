@@ -250,17 +250,24 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                             LinearLayout imageCont = view.findViewById(R.id.image_cont);
                             imageCont.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getRegular()), false));
                             if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://")) {
-//                                Picasso.with(context).load(botMessage.getValue()).resize(500, 360).transform(new BitmapTransform()).centerCrop().onlyScaleDown().into(imageView);
-                                if (Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("jpg")
-                                        || Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("jpeg")
-                                        || Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("png")) {
+                                String path = botMessage.getValue();
+                                String ext = Util.getFileExtensionByUrl(path).toLowerCase();
+                                if (ext.contains("jpg")
+                                        || ext.contains("jpeg")
+                                        || ext.contains("png")) {
                                     Picasso.with(context).load(botMessage.getValue()).placeholder(R.drawable.placeholder).into(imageView);
-                                } else {
+                                } else if (ext.contains("gif")) {
+                                    Glide.with(context).asGif().load(botMessage.getValue()).into(imageView);
+                                } else if (ext.contains("pdf")) {
                                     imageView.setImageResource(R.drawable.pdf);
-//                                    Picasso.with(context).load(botMessage.getValue()).placeholder(R.drawable.pdf).into(imageView);
+                                } else if (ext.contains("ppt") || ext.contains("pptx")) {
+                                    imageView.setImageResource(R.drawable.ppt);
+                                } else if (ext.contains("xls") || ext.contains("xlsx")) {
+                                    imageView.setImageResource(R.drawable.xls);
+                                } else if (ext.contains("doc") || ext.contains(".docx")) {
+                                    imageView.setImageResource(R.drawable.doc);
                                 }
                             }
-
                             imageView.setTag(botMessage);
                             imageView.setOnClickListener(clickListener);
                             holder.sentFieldCont.addView(view);

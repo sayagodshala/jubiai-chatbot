@@ -16,7 +16,7 @@ Android Plugin to implement chatbot
 The **Auth UI** library is pushed to jcenter, so you need to add the following dependency to your app's `build.gradle`.
 
 ```gradle
-compile 'com.jubiai:ai-chatbot:0.0.1'
+compile 'com.sayagodshala:jubiai-chatbot:1.0.0'
 ```
 
 ### As a module
@@ -25,37 +25,44 @@ If you can't include it as gradle dependency, you can also download this GitHub 
 
 ## 2. Usage
 
-First step in configuring the Auth UI Framework is to place `FrameLayout Container` in your layout.
-
-```xml
-<FrameLayout
-        android:id="@+id/frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-```
-
 Next step is to configure the `AuthUISettings`.
 
 Example:
 
 ```java
-ChatBotConfig chatBotConfig = new ChatBotConfig();
-chatBotConfig.setAppLogo(R.drawable.ic_company_logo);
-chatBotConfig.setMaterialTheme(MaterialTheme.CYAN);
-chatBotConfig.setTitle("HDFC Bank | Ask About Loan");
+private ChatBotConfig chatBotConfig() {
+    ChatBotConfig chatBotConfig = new ChatBotConfig();
+    chatBotConfig.setAppLogo(R.drawable.ic_launcher);
+    chatBotConfig.setMaterialTheme(MaterialTheme.BLUE);
+    chatBotConfig.setTitle("YOUR PROJECT TITLE");
+    chatBotConfig.setProjectId("YOUR PROJECT ID");
+    chatBotConfig.setHost("https://somedomain.com");
+    //        attachment by default is true
+    //        chatBotConfig.setAttachmentRequired(false);
+    //        speech by default is false
+    //        chatBotConfig.setSpeechRequired(true);
+    chatBotConfig.setFcmToken(FirebaseInstanceId.getInstance().getToken());
+}
 ```
-Next step is to load the `ChatBotFragment` in your Activity.
+Next step is to save ChatBotConfig.
 
 ```java
-// declare instance of ChatBotFragment
-ChatBotFragment chatBotFragment;
-// load fragment with your own settings or default settings
-chatBotFragment = ChatBotFragment.newInstance(chatBotConfig);
-**OR**
-chatBotFragment = ChatBotFragment.newInstanceWithDefaultSettings();
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    ...
+    ChatBotActivity.saveConfig(this, chatBotConfig());
+}
+```
 
-// load authUIFragment into the frame layout
-ChatBotFragment.loadFragment(this, chatBotFragment, R.id.frame);
+Next step is to check and give access to Overlay Permissions for displaying Widget.
+
+```java
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    ...
+    ChatBotActivity.checkOverlayPermsForWidget(this);
+}
 ```
 
 Final step is to implement `ChatBotFragmentListener` interface in your target activity where `ChatBotFragment` is loaded with corresponding methods.

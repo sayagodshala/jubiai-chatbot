@@ -17,46 +17,25 @@ import com.jubi.ai.chatbot.views.activity.ChatBotActivity;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
         ChatBotActivity.saveConfig(this, chatBotConfig());
+        ChatBotActivity.checkOverlayPermsForWidget(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-
-            //If the draw over permission is not available open the settings screen
-            //to grant the permission.
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
-        } else {
-            initChatHead();
-            finish();
-        }
-    }
-
-    private void initChatHead() {
-        Intent intent = new Intent(ChatActivity.this, ChatHeadService.class);
-        startService(intent);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
-
-            //Check if the permission is granted or not.
+        if (requestCode == ChatBotActivity.CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
             if (resultCode == RESULT_OK) {
-                initChatHead();
-                finish();
-            } else { //Permission is not available
+                ChatBotActivity.initChatHead(this);
+            } else {
                 Toast.makeText(this,
                         "Draw over other app permission not available. Closing the application",
                         Toast.LENGTH_SHORT).show();
-
                 finish();
             }
         } else {

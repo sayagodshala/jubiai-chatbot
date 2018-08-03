@@ -1,11 +1,14 @@
 package com.jubi.ai.chatbot.views.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +45,7 @@ import static rx.schedulers.Schedulers.start;
 public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmentListener, View.OnClickListener {
     ChatBotFragment chatBotFragment;
     public static String CHATBOT_CONFIG = "chatbot_config";
-
+    public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     LinearLayout chatStartCont, empty;
     ImageView start;
     Button submit;
@@ -226,6 +229,24 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(chatBotConfig.getMaterialTheme().getColor().getStatusBar()));
         }
+    }
+
+    public static void checkOverlayPermsForWidget(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
+            //If the draw over permission is not available open the settings screen
+            //to grant the permission.
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + context.getPackageName()));
+            ((Activity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+        } else {
+            initChatHead(context);
+        }
+    }
+
+    public static void initChatHead(Context context) {
+        Intent intent = new Intent(context, ChatHeadService.class);
+        context.startService(intent);
+        ((Activity) context).finish();
     }
 
 }
