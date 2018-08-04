@@ -24,7 +24,6 @@ public class ChatActivity extends AppCompatActivity {
 
         ChatBotActivity.saveConfig(this, chatBotConfig());
         ChatBotActivity.checkOverlayPermsForWidget(this);
-
     }
 
     @Override
@@ -52,8 +51,6 @@ public class ChatActivity extends AppCompatActivity {
         chatBotConfig.setHost("https://prudential-backend.herokuapp.com");
 //        attachment by default is true
 //        chatBotConfig.setAttachmentRequired(false);
-//        speech by default is false
-//        chatBotConfig.setSpeechRequired(true);
         chatBotConfig.setFcmToken(FirebaseInstanceId.getInstance().getToken());
         return chatBotConfig;
     }

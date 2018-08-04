@@ -6,11 +6,7 @@ buildscript {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
-        // for jubi-ai chatbot
-        maven {
-            url 'https://dl.bintray.com/sayagodshala/maven/'
-        }
-        /////
+        maven { url 'https://dl.bintray.com/sayagodshala/maven/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0-alpha18'
@@ -27,11 +23,7 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
-        // for jubi-ai chatbot
-        maven {
-            url 'https://dl.bintray.com/sayagodshala/maven/'
-        }
-        /////
+        maven { url 'https://dl.bintray.com/sayagodshala/maven/' }
     }
 }
 
