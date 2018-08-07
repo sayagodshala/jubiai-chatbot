@@ -21,22 +21,13 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-        ChatBotActivity.saveConfig(this, chatBotConfig());
-        ChatBotActivity.checkOverlayPermsForWidget(this);
+        ChatBotActivity.setUp(this, chatBotConfig(), true);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ChatBotActivity.CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
-            if (resultCode == RESULT_OK) {
-                ChatBotActivity.initChatHead(this);
-            } else {
-                Toast.makeText(this,
-                        "Draw over other app permission not available. Closing the application",
-                        Toast.LENGTH_SHORT).show();
-                finish();
-            }
+            ChatBotActivity.initChatHead(this);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

@@ -6,7 +6,9 @@ import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -54,6 +56,12 @@ public class ChatHeadService extends Service {
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        mWindowManager.getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels - 200;
+        int width = displaymetrics.widthPixels - 200;
+
         //Add the view to the window.
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -65,11 +73,10 @@ public class ChatHeadService extends Service {
 
         //Specify the chat head position
         params.gravity = Gravity.TOP | Gravity.LEFT;        //Initially view will be added to top-left corner
-        params.x = 0;
-        params.y = 100;
+        params.x = width;
+        params.y = height;
 
         //Add the view to the window
-        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mChatHeadView, params);
 
         //Set the close button.
@@ -120,7 +127,7 @@ public class ChatHeadService extends Service {
                         //to identify if the user clicked the view or not.
                         if (initialX == params.x && initialY == params.y) {
                             //Open the chat conversation click.
-                            Intent intent = ChatBotActivity.getLaunchIntent(ChatHeadService.this, chatBotConfig);
+                            Intent intent = ChatBotActivity.getLaunchIntent(ChatHeadService.this);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             //close the service and remove the chat heads

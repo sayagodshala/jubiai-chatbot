@@ -52,6 +52,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     TextView chatDialog, headline, info;
     private ChatBotConfig chatBotConfig;
     private boolean widgetCancled = false;
+    private PreferenceUtils preferenceUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,16 +73,14 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         info = findViewById(R.id.info);
         submit = findViewById(R.id.submit);
         submit.setOnClickListener(this);
-        PreferenceUtils preferenceUtils = new PreferenceUtils(this);
+        preferenceUtils = new PreferenceUtils(this);
+        chatBotConfig = preferenceUtils.getChatBotConfig();
         if (preferenceUtils.getFCMToken().equalsIgnoreCase("")) {
             fcmTokenEmptyDialog();
-        } else if (getIntent().getExtras() != null && getIntent().getParcelableExtra(CHATBOT_CONFIG) != null) {
-            chatBotConfig = (ChatBotConfig) getIntent().getParcelableExtra(CHATBOT_CONFIG);
+        } else if (chatBotConfig != null) {
             if (chatBotConfig.getProjectId() != null && chatBotConfig.getHost() != null) {
                 preferenceUtils.setChatBotConfig(chatBotConfig);
-//                startTimerForChatWidget();
                 loadChatView();
-//                start.setOnClickListener(this);
                 applyTheme();
             } else {
                 chatBotConfigDialog();
@@ -91,16 +90,18 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         }
     }
 
-    public static Intent getLaunchIntent(Context context, ChatBotConfig chatBotConfig) {
+    public static Intent getLaunchIntent(Context context) {
         Intent intent = new Intent(context, ChatBotActivity.class);
-        intent.putExtra(CHATBOT_CONFIG, chatBotConfig);
         return intent;
     }
 
-    public static void saveConfig(Context context, ChatBotConfig chatBotConfig) {
+    public static void setUp(Context context, ChatBotConfig chatBotConfig, boolean overlay) {
         PreferenceUtils preferenceUtils = new PreferenceUtils(context);
         preferenceUtils.setFCMToken(chatBotConfig.getFcmToken());
         preferenceUtils.setChatBotConfig(chatBotConfig);
+        if (overlay) {
+            checkOverlayPermsForWidget(context);
+        }
     }
 
     @Override
@@ -137,35 +138,19 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         }.start();
     }
 
-    private void startTimerForCheckingFCMToken() {
-        new CountDownTimer(5000, 1000) {
-            public int counter = 0;
-
-            public void onTick(long millisUntilFinished) {
-                counter += 1;
-                if (counter == 1) {
-                    chatStartCont.setVisibility(View.VISIBLE);
-                    start.setVisibility(View.VISIBLE);
-                } else if (counter == 2) {
-                    chatDialog.setVisibility(View.VISIBLE);
-                }
-            }
-
-            public void onFinish() {
-                if (!widgetCancled) {
-                    loadChatView();
-                }
-            }
-        }.start();
-    }
-
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.start) {
             widgetCancled = true;
             loadChatView();
-        } else {
-            finish();
+        } else if (view.getId() == R.id.submit) {
+            if (submit.getText().toString().equalsIgnoreCase("refresh")) {
+                finish();
+                startActivity(getIntent());
+            } else {
+                finish();
+            }
+
         }
     }
 
@@ -196,7 +181,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         Util.defaultAnimateView(this, empty);
         headline.setText(chatBotConfig.getTitle());
         headline.setText("FCM Token for this device not found, Please check firebase integration!");
-        submit.setText("Close");
+        submit.setText("Refresh");
     }
 
     @Override
@@ -239,14 +224,16 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
                     Uri.parse("package:" + context.getPackageName()));
             ((Activity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
         } else {
-            initChatHead(context);
+            Intent intent = new Intent(context, ChatHeadService.class);
+            context.startService(intent);
         }
     }
 
     public static void initChatHead(Context context) {
-        Intent intent = new Intent(context, ChatHeadService.class);
-        context.startService(intent);
-        ((Activity) context).finish();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(context)) {
+            Intent intent = new Intent(context, ChatHeadService.class);
+            context.startService(intent);
+        }
     }
 
 }
