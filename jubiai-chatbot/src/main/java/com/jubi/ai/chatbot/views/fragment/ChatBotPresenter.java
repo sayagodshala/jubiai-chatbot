@@ -72,10 +72,6 @@ public class ChatBotPresenter {
         chatBotModel.updateChat(chatMessage);
     }
 
-    public void receiveChat(ChatMessage chatMessage) {
-        chatBotModel.insertChat(chatMessage);
-    }
-
     public void sendChat(ChatMessage chatMessage) {
         chatBotModel.insertChat(chatMessage);
     }
@@ -140,10 +136,6 @@ public class ChatBotPresenter {
 
     }
 
-    public void clear() {
-        compositeSubscription.clear();
-    }
-
     public void bindViewModel(FragmentActivity fragmentActivity, LifecycleOwner owner) {
         chatMessageListViewModel = ViewModelProviders.of(fragmentActivity).get(ChatMessageListViewModel.class);
         chatMessageListViewModel.getChatMessageList().observe(owner, new Observer<List<ChatMessage>>() {
@@ -179,29 +171,6 @@ public class ChatBotPresenter {
         send.setClickable(enable);
     }
 
-    public void startFakeIncomingMessageListener(final String messageStr) {
-        new CountDownTimer(3000, 1000) {
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            public void onFinish() {
-                if (messageStr.contains("image")) {
-                    receiveChat(chatBotModel.imageChatMessage());
-                } else if (messageStr.contains("option")) {
-                    receiveChat(chatBotModel.textChatMessageWithOptions());
-                } else if (messageStr.contains("text")) {
-                    receiveChat(chatBotModel.textChatMessage());
-                } else if (messageStr.contains("carousel")) {
-                    receiveChat(chatBotModel.textChatMessageWithCarouselOptions());
-                } else if (messageStr.contains("video")) {
-                    receiveChat(chatBotModel.videoChatMessage());
-                }
-
-            }
-        }.start();
-    }
-
     public void imageChatMessage(String url) {
         sendChat(chatBotModel.cameraImageChatMessage(url));
     }
@@ -217,9 +186,4 @@ public class ChatBotPresenter {
             }
         }.start();
     }
-
-    public ChatMessage getChatFromMessage(String mess) {
-        return chatBotModel.makeChatFromMessage(mess);
-    }
-
 }

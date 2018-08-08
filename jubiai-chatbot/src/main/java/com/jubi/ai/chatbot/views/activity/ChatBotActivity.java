@@ -9,10 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,15 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amazonaws.mobile.client.AWSMobileClient;
-import com.fujiyuu75.sequent.Animation;
-import com.fujiyuu75.sequent.Direction;
-import com.fujiyuu75.sequent.Sequent;
+
+import com.jubi.ai.chatbot.ChatBotApp;
 import com.jubi.ai.chatbot.R;
 import com.jubi.ai.chatbot.listeners.ChatBotFragmentListener;
 import com.jubi.ai.chatbot.models.ChatBotConfig;
 import com.jubi.ai.chatbot.persistence.PreferenceUtils;
 import com.jubi.ai.chatbot.services.ChatHeadService;
-import com.jubi.ai.chatbot.util.CustomPopoverView;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.fragment.ChatBotFragment;
 import com.squareup.picasso.Picasso;
@@ -40,11 +35,8 @@ import net.gotev.speech.Speech;
 
 import java.util.Locale;
 
-import static rx.schedulers.Schedulers.start;
-
 public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmentListener, View.OnClickListener {
     ChatBotFragment chatBotFragment;
-    public static String CHATBOT_CONFIG = "chatbot_config";
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     LinearLayout chatStartCont, empty;
     ImageView start;
@@ -99,6 +91,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         PreferenceUtils preferenceUtils = new PreferenceUtils(context);
         preferenceUtils.setFCMToken(chatBotConfig.getFcmToken());
         preferenceUtils.setChatBotConfig(chatBotConfig);
+        ChatBotApp.initDatabase(context);
         if (overlay) {
             checkOverlayPermsForWidget(context);
         }
@@ -119,7 +112,6 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     private void startTimerForChatWidget() {
         new CountDownTimer(5000, 1000) {
             public int counter = 0;
-
             public void onTick(long millisUntilFinished) {
                 counter += 1;
                 if (counter == 1) {
@@ -154,6 +146,9 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         }
     }
 
+    /**
+     * Load chatfragment
+     */
     private void loadChatView() {
         chatStartCont.setVisibility(View.GONE);
         start.setVisibility(View.GONE);
@@ -167,6 +162,10 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         changeStatusBarColor();
     }
 
+
+    /**
+     * Show chatbot config dialog if not configured properly
+     */
     public void chatBotConfigDialog() {
         empty.setVisibility(View.VISIBLE);
         Util.defaultAnimateView(this, empty);
@@ -176,6 +175,9 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
 
     }
 
+    /**
+     * Show FCM dialog if Device token not found
+     */
     public void fcmTokenEmptyDialog() {
         empty.setVisibility(View.VISIBLE);
         Util.defaultAnimateView(this, empty);
@@ -186,7 +188,6 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ChatBotFragment.TAG);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -196,15 +197,10 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         super.onDestroy();
     }
 
-    private void initChatHead() {
-        Intent intent = new Intent(this, ChatHeadService.class);
-        startService(intent);
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        initChatHead();
+        initChatHead(this);
     }
 
     private void changeStatusBarColor() {

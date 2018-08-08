@@ -38,10 +38,9 @@ public class ChatActivity extends AppCompatActivity {
         chatBotConfig.setAppLogo(R.drawable.ic_early_salary_logo);
         chatBotConfig.setMaterialTheme(MaterialTheme.EARLY_SALARY);
         chatBotConfig.setTitle("Earl");
-        chatBotConfig.setProjectId("JUBIglSWd_Prudential");
-        chatBotConfig.setHost("https://prudential-backend.herokuapp.com");
-//        attachment by default is true
-//        chatBotConfig.setAttachmentRequired(false);
+        chatBotConfig.setProjectId("JUBI15Q9uk_EarlySalaryUAT");
+        chatBotConfig.setPath("ios");
+        chatBotConfig.setHost("http://early-salary-development.herokuapp.com");
         chatBotConfig.setFcmToken(FirebaseInstanceId.getInstance().getToken());
         return chatBotConfig;
     }

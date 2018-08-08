@@ -32,13 +32,7 @@ public class ChatBotApp {
         return database;
     }
 
-    public static void init(Context context, String dbName) {
-        PreferenceUtils preferenceUtils = new PreferenceUtils(context);
-        preferenceUtils.setDBName(dbName);
-        JubiAIChatBotDatabase database = JubiAIChatBotDatabase.getInstance(context, dbName);
-    }
-
-    public static void init(Context context) {
+    public static void initDatabase(Context context) {
         PreferenceUtils preferenceUtils = new PreferenceUtils(context);
         String dbName = preferenceUtils.getDBName();
         if (dbName.equalsIgnoreCase("")) {
@@ -46,70 +40,6 @@ public class ChatBotApp {
             preferenceUtils.setDBName(dbName);
         }
         JubiAIChatBotDatabase database = JubiAIChatBotDatabase.getInstance(context, dbName);
-    }
-
-    public static void saveChatMessage(Context context, ChatMessage chatMessage) {
-        JubiAIChatBotDatabase database = getDatabase(context);
-
-        ChatMessage typingMessage = database.chatMessageDao().findByAnswerType(AnswerType.TYPING.name());
-        if (typingMessage != null) {
-            database.chatMessageDao().deleteChatMessage(typingMessage);
-        }
-        database.chatMessageDao().insertChat(chatMessage);
-    }
-
-    public static void pushFCMDetails(Context context, String fcmToken, String apiKey) {
-        if (!Util.textIsEmpty(fcmToken)) {
-            final CompositeSubscription compositeSubscription = new CompositeSubscription();
-            final PreferenceUtils preferenceUtils = new PreferenceUtils(context);
-            preferenceUtils.setFCMToken(fcmToken);
-            preferenceUtils.setFCMAPIKey(apiKey);
-//            APIService apiService = APIClient.getAdapterApiService();
-//            compositeSubscription.add(apiService.pushToken(Util.uniqueDeviceID(context), fcmToken)
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(new Subscriber<Response<BasicResponse>>() {
-//                        @Override
-//                        public void onCompleted() {
-//                            Log.d("PushFCMToken", "completed");
-//                            compositeSubscription.clear();
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//                            Log.d("PushFCMToken", "onError " + e.getMessage());
-//                        }
-//
-//                        @Override
-//                        public void onNext(Response<BasicResponse> response) {
-//                            Log.d("PushFCMToken", "onNext " + response.code());
-//                            if (response.code() == 200) {
-//                                preferenceUtils.setFCMTokenSaved();
-//                            }
-//                        }
-//                    }));
-        }
-    }
-
-    public static boolean isChatBotMessage(Map<String, String> rawData) {
-        boolean flag = false;
-        if (rawData != null && rawData.size() > 0 && rawData.containsKey("botMessage")) {
-            flag = true;
-        }
-        return flag;
-    }
-
-    public static void handleMessage(Context context, ChatBotNotification chatBotNotification) {
-        Log.d("ChatBotApp", "Message data payload: " + new Gson().toJson(chatBotNotification));
-        ChatMessage chatRoomObject = new ChatMessage();
-        chatRoomObject.setWebId(chatBotNotification.getWebId());
-        chatRoomObject.setProjectId(chatBotNotification.getProjectId());
-        if (chatBotNotification.getBotMessage() != null)
-            chatRoomObject.setBotMessage(chatBotNotification.getBotMessage());
-        chatRoomObject.setAnswerType(chatBotNotification.getAnswerType());
-        if (chatBotNotification.getOptions() != null)
-            chatRoomObject.setOptions(chatBotNotification.getOptions());
-        saveChatMessage(context, chatRoomObject);
     }
 
     public static ChatBotNotification copyPropertiesFromMap(Map<String, String> rawData) {

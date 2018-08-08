@@ -17,11 +17,11 @@ public interface ChatMessageDao {
     @Insert
     void insertChat(ChatMessage... chats);
 
-    @Query("SELECT * FROM chat WHERE answer_type LIKE :answerType LIMIT 1")
-    ChatMessage findByAnswerType(String answerType);
+    @Query("SELECT * FROM chat WHERE answer_type LIKE :answerType")
+    ChatMessage[] findByAnswerType(String answerType);
 
     @Delete
-    void deleteChatMessage(ChatMessage chatMessage);
+    void deleteChatMessage(ChatMessage... chatMessage);
 
     @Update
     int updateChat(ChatMessage chatMessage);

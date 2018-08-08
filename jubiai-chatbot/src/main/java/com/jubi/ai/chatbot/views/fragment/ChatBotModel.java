@@ -48,6 +48,7 @@ public class ChatBotModel {
     }
 
     public void updateChat(ChatMessage chatMessage) {
+        deleteTypingMessage();
         database.chatMessageDao().updateChat(chatMessage);
     }
 
@@ -57,6 +58,7 @@ public class ChatBotModel {
     }
 
     public void insertChat() {
+        deleteTypingMessage();
         database.chatMessageDao().insertChat(typingChatMessage());
     }
 
@@ -221,28 +223,6 @@ public class ChatBotModel {
         return chatMessage;
     }
 
-    public ChatMessage videoChatMessage() {
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setProjectId(chatBotConfig.getProjectId());
-        chatMessage.setWebId(chatBotConfig.getWebId());
-        chatMessage.setAnswerType(AnswerType.TEXT.name());
-
-        List<BotMessage> botMessages = new ArrayList<>();
-
-        Random rand = new Random();
-        int index = 0;
-
-        index = rand.nextInt(2);
-
-        String[] images = {"YxTXZYROnd8", "sfQmio9uhBw", "mElVGah7Epg"};
-
-        botMessages.add(new BotMessage(2, Type.VIDEO.name(), images[index]));
-
-        chatMessage.setBotMessage(new Gson().toJson(botMessages));
-
-        return chatMessage;
-    }
-
     public ChatMessage typingChatMessage() {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setProjectId(chatBotConfig.getProjectId());
@@ -252,7 +232,7 @@ public class ChatBotModel {
     }
 
     private void deleteTypingMessage() {
-        ChatMessage chatMessage = database.chatMessageDao().findByAnswerType(AnswerType.TYPING.name());
+        ChatMessage[] chatMessage = database.chatMessageDao().findByAnswerType(AnswerType.TYPING.name());
         if (chatMessage != null) {
             database.chatMessageDao().deleteChatMessage(chatMessage);
         }

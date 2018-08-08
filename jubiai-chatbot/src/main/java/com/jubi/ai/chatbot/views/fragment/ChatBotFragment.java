@@ -154,15 +154,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         return fragment;
     }
 
-    public static ChatBotFragment newInstanceWithDefaultConfig() {
-        Bundle bundle = new Bundle();
-        ChatBotConfig chatBotConfig = new ChatBotConfig();
-        bundle.putParcelable(CHATBOT_CONFIG, chatBotConfig);
-        ChatBotFragment fragment = new ChatBotFragment();
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
     public static void loadFragment(FragmentActivity activity, android.support.v4.app.Fragment f, int frameId) {
         activity.getSupportFragmentManager().beginTransaction().add(frameId, f, TAG).commitAllowingStateLoss();
     }

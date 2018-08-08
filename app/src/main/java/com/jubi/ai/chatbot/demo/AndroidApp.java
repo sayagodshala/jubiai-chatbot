@@ -12,12 +12,6 @@ public class AndroidApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        // Init chatbotapp with your choice of database name
-//        ChatBotApp.init(this, "jubi_ai_production");
-
-        // Init chatbotapp with default database name;
-        ChatBotApp.init(this);
-
         Stetho.initializeWithDefaults(this);
     }
 

@@ -41,10 +41,10 @@
             android:layout_height="wrap_content"
             android:background="@drawable/btn_carousel_option"
             android:padding="16dp"
-            android:visibility="gone"
             android:text="Hi there.\nI am your Assistant 🙂.\nThe smartest way to get\nanswers to all your queries.\nTry me out."
             android:textColor="@color/secondary_text_black"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
 
         <ImageView
