@@ -25,6 +25,11 @@ ext {
     licenseName = 'The Apache Software License, Version 2.0'
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
     allLicenses = ["Apache-2.0"]
+
+    retrofit = '2.3.0'
+    amazon = '2.6.27'
+    room = '1.1.1'
+    targetSDK = '27.1.1'
 }
 /**
  *
@@ -52,10 +57,10 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation "com.android.support:appcompat-v7:$targetSDK"
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation "com.android.support:design:$targetSDK"
+    implementation "com.android.support:recyclerview-v7:$targetSDK"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -63,10 +68,10 @@ dependencies {
     /**
      * Room, Livedata, Viewmodel
      */
-    implementation 'android.arch.persistence.room:runtime:1.1.1'
-    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
-    annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
+    implementation "android.arch.persistence.room:runtime:$room"
+    annotationProcessor "android.arch.persistence.room:compiler:$room"
+    implementation "android.arch.lifecycle:extensions:$room"
+    annotationProcessor "android.arch.lifecycle:compiler:$room"
 
     /**
      * Json presentation
@@ -88,10 +93,10 @@ dependencies {
     /**
      * Retrofit, Okhttp, Adapter and rx
      */
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit"
+    implementation "com.squareup.retrofit2:adapter-rxjava:$retrofit"
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
     implementation 'io.reactivex:rxjava:1.3.3'
     implementation 'io.reactivex:rxandroid:1.2.1'
 
@@ -113,9 +118,9 @@ dependencies {
     /**
      * Amazon services for file operations
      */
-    implementation('com.amazonaws:aws-android-sdk-mobile-client:2.6.27') { transitive = true }
-    implementation 'com.amazonaws:aws-android-sdk-s3:2.6.27'
-    implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.27'
+    implementation ("com.amazonaws:aws-android-sdk-mobile-client:$amazon") { transitive = true }
+    implementation "com.amazonaws:aws-android-sdk-s3:$amazon"
+    implementation "com.amazonaws:aws-android-sdk-cognito:$amazon"
 
     /**
      * Image Pickers
