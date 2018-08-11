@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.jubi.ai.chatbot.R;
+import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.models.ChatBotConfig;
 import com.jubi.ai.chatbot.persistence.PreferenceUtils;
 import com.jubi.ai.chatbot.util.Util;
@@ -149,7 +150,7 @@ public class ChatHeadService extends Service {
             }
         });
 
-        if (chatBotConfig != null) {
+        if (chatBotConfig != null && chatBotConfig.getMaterialTheme() != MaterialTheme.EARLY_SALARY) {
             chatHeadImage.setBackgroundDrawable(Util.drawCircle(getResources().getColor(chatBotConfig.getMaterialTheme().getColor().getRegular())));
         }
     }
