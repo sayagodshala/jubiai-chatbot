@@ -213,17 +213,18 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
 //                    }
                     break;
                 case GENERIC:
-                    chatMessageCarouselAdapter = new ChatMessageCarouselAdapter(context, new ArrayList<ChatOption>(), materialTheme);
-                    MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-                    chatMessageCarouselAdapter.setItemClickListener(new IResultListener<View>() {
-                        @Override
-                        public void onResult(View view) {
-                            mChildItemClickListener.onResult(view);
-                        }
-                    });
-                    holder.carouselCont.setLayoutManager(layoutManager);
-                    holder.carouselCont.setAdapter(chatMessageCarouselAdapter);
-                    chatMessageCarouselAdapter.addItems(chat.getOptions());
+                    if (chat.getOptions() != null && chat.getOptions().size() > 0) {
+                        chatMessageCarouselAdapter = new ChatMessageCarouselAdapter(context, chat.getOptions(), materialTheme);
+                        MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                        chatMessageCarouselAdapter.setItemClickListener(new IResultListener<View>() {
+                            @Override
+                            public void onResult(View view) {
+                                mChildItemClickListener.onResult(view);
+                            }
+                        });
+                        holder.carouselCont.setLayoutManager(layoutManager);
+                        holder.carouselCont.setAdapter(chatMessageCarouselAdapter);
+                    }
                     break;
                 case TYPING:
                     holder.typing.setVisibility(View.VISIBLE);

@@ -99,24 +99,6 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
         notifyDataSetChanged();
     }
 
-//    private void applyTheme(ChatMessageViewHolder holder) {
-//        MaterialColor materialColor = materialTheme.getColor();
-//        switch (materialTheme) {
-//            case WHITE:
-//                holder.senderPic.setColorFilter(ContextCompat.getColor(context, materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
-//                holder.brandLogo.setBackgroundDrawable(drawCircle(context.getResources().getColor(materialColor.getDark())));
-//                break;
-//            default:
-//                holder.senderPic.setColorFilter(ContextCompat.getColor(context, materialColor.getLightGrey()), android.graphics.PorterDuff.Mode.SRC_IN);
-//                holder.brandLogo.setBackgroundDrawable(drawCircle(context.getResources().getColor(materialColor.getRegular())));
-//                break;
-//        }
-//
-//
-//
-////        holder.sent.setTextColor(ContextCompat.getColor(context, materialColor.getWhite()));
-//    }
-
     public void setItemClickListener(IResultListener<View> listener) {
         mItemClickListener = listener;
     }
