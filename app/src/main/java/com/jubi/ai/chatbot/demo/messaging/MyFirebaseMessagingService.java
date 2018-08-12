@@ -52,10 +52,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
 //        Log.d(TAG, "From: " + remoteMessage.getFrom());
 //
-//        if (ChatBotApp.isChatBotMessage(remoteMessage.getData())) {
-//            ChatBotNotification chatBotNotification = ChatBotApp.copyPropertiesFromMap(remoteMessage.getData());
-//            ChatBotApp.handleMessage(getApplicationContext(), chatBotNotification);
-//        }
+        if (ChatBotApp.isChatBotMessage(remoteMessage.getData())) {
+            ChatBotNotification chatBotNotification = ChatBotApp.copyPropertiesFromMap(remoteMessage.getData());
+            ChatBotApp.handleMessage(getApplicationContext(), chatBotNotification);
+        }
 //
 //        if (remoteMessage.getNotification() != null) {
 //            Log.d(TAG, "Message Notification: " + new Gson().toJson(remoteMessage.getNotification()));

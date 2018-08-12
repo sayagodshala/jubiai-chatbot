@@ -42,6 +42,27 @@ public class ChatBotApp {
         JubiAIChatBotDatabase database = JubiAIChatBotDatabase.getInstance(context, dbName);
     }
 
+    public static boolean isChatBotMessage(Map<String, String> rawData) {
+        boolean flag = false;
+        if (rawData != null && rawData.size() > 0 && rawData.containsKey("botMessage")) {
+            flag = true;
+        }
+        return flag;
+    }
+
+    public static void handleMessage(Context context, ChatBotNotification chatBotNotification) {
+        Log.d("ChatBotApp", "Message data payload: " + new Gson().toJson(chatBotNotification));
+        ChatMessage chatRoomObject = new ChatMessage();
+        chatRoomObject.setWebId(chatBotNotification.getWebId());
+        chatRoomObject.setProjectId(chatBotNotification.getProjectId());
+        if (chatBotNotification.getBotMessage() != null)
+            chatRoomObject.setBotMessage(chatBotNotification.getBotMessage());
+        chatRoomObject.setAnswerType(chatBotNotification.getAnswerType());
+        if (chatBotNotification.getOptions() != null)
+            chatRoomObject.setOptions(chatBotNotification.getOptions());
+        saveChatMessage(context, chatRoomObject);
+    }
+
     public static ChatBotNotification copyPropertiesFromMap(Map<String, String> rawData) {
         ChatBotNotification chatBotNotification = new ChatBotNotification();
         chatBotNotification.setWebId(rawData.get("webId"));
@@ -58,6 +79,16 @@ public class ChatBotApp {
         chatBotNotification.setContentTitle(rawData.get("contentTitle"));
         chatBotNotification.setTickerText(rawData.get("tickerText"));
         return chatBotNotification;
+    }
+
+    public static void saveChatMessage(Context context, ChatMessage chatMessage) {
+        JubiAIChatBotDatabase database = getDatabase(context);
+
+        ChatMessage[] typingMessage = database.chatMessageDao().findByAnswerType(AnswerType.TYPING.name());
+        if (typingMessage != null) {
+            database.chatMessageDao().deleteChatMessage(typingMessage);
+        }
+        database.chatMessageDao().insertChat(chatMessage);
     }
 
     public static void generateChatBotNotification(Context context, Class<?> cls, ChatBotNotification chatMessage, int icon) {
