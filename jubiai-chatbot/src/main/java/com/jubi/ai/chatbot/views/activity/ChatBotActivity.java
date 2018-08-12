@@ -89,7 +89,6 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     }
 
     public static void setUp(Context context, ChatBotConfig chatBotConfig, boolean overlay) {
-        ViewTarget.setTagId(R.id.glide_tag);
         PreferenceUtils preferenceUtils = new PreferenceUtils(context);
         preferenceUtils.setFCMToken(chatBotConfig.getFcmToken());
         preferenceUtils.setChatBotConfig(chatBotConfig);
