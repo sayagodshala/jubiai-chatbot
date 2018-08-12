@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.amazonaws.mobile.client.AWSMobileClient;
 
+import com.bumptech.glide.request.target.ViewTarget;
 import com.jubi.ai.chatbot.ChatBotApp;
 import com.jubi.ai.chatbot.R;
 import com.jubi.ai.chatbot.listeners.ChatBotFragmentListener;
@@ -88,6 +89,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     }
 
     public static void setUp(Context context, ChatBotConfig chatBotConfig, boolean overlay) {
+        ViewTarget.setTagId(R.id.glide_tag);
         PreferenceUtils preferenceUtils = new PreferenceUtils(context);
         preferenceUtils.setFCMToken(chatBotConfig.getFcmToken());
         preferenceUtils.setChatBotConfig(chatBotConfig);
@@ -100,6 +102,12 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     @Override
     public void onChatBotBackpressed() {
         onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        initChatHead(this);
     }
 
     @Override
@@ -197,11 +205,6 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         super.onDestroy();
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        initChatHead(this);
-    }
 
     private void changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= 21) {

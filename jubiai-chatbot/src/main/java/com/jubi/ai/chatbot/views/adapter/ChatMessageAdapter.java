@@ -135,13 +135,15 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                             if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://")) {
                                 if (Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("gif")) {
                                     Glide.with(context).asGif().load(botMessage.getValue()).into(imageView);
+//                                    imageView.setTag(R.id.glide_tag, botMessage);
                                 } else {
                                     Picasso.with(context).load(botMessage.getValue()).into(imageView);
+                                    imageView.setTag(botMessage);
                                 }
                             } else {
                                 Picasso.with(context).load(Uri.parse("file://" + botMessage.getValue())).into(imageView);
+                                imageView.setTag(botMessage);
                             }
-                            imageView.setTag(botMessage);
                             imageView.setOnClickListener(clickListener);
                             holder.fieldCont.addView(view);
                         }
@@ -250,6 +252,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                             ImageView imageView = view.findViewById(R.id.image);
                             LinearLayout imageCont = view.findViewById(R.id.image_cont);
                             imageCont.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getRegular()), false));
+                            imageView.setTag(botMessage);
                             if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://")) {
                                 String path = botMessage.getValue();
                                 String ext = Util.getFileExtensionByUrl(path).toLowerCase();
@@ -259,6 +262,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                                     Picasso.with(context).load(botMessage.getValue()).placeholder(R.drawable.placeholder).into(imageView);
                                 } else if (ext.contains("gif")) {
                                     Glide.with(context).asGif().load(botMessage.getValue()).into(imageView);
+                                    imageView.setTag(null);
+//                                    imageView.setTag(R.id.glide_tag, botMessage);
                                 } else if (ext.contains("pdf")) {
                                     imageView.setImageResource(R.drawable.pdf);
                                 } else if (ext.contains("ppt") || ext.contains("pptx")) {
@@ -269,7 +274,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                                     imageView.setImageResource(R.drawable.doc);
                                 }
                             }
-                            imageView.setTag(botMessage);
                             imageView.setOnClickListener(clickListener);
                             holder.sentFieldCont.addView(view);
                             holder.sentFieldCont.setVisibility(View.VISIBLE);
