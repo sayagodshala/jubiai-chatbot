@@ -261,8 +261,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                                         || ext.contains("png")) {
                                     Picasso.with(context).load(botMessage.getValue()).placeholder(R.drawable.placeholder).into(imageView);
                                 } else if (ext.contains("gif")) {
-                                    Glide.with(context).asGif().load(botMessage.getValue()).into(imageView);
                                     imageView.setTag(null);
+                                    Glide.with(context).asGif().load(botMessage.getValue()).into(imageView);
 //                                    imageView.setTag(R.id.glide_tag, botMessage);
                                 } else if (ext.contains("pdf")) {
                                     imageView.setImageResource(R.drawable.pdf);
