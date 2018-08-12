@@ -4,12 +4,8 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -17,9 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -29,19 +23,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.amazonaws.mobile.client.AWSMobileClient;
-import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.appunite.appunitevideoplayer.PlayerActivity;
 import com.google.gson.Gson;
@@ -63,12 +52,10 @@ import com.jubi.ai.chatbot.util.AWSUtil;
 import com.jubi.ai.chatbot.util.Constants;
 import com.jubi.ai.chatbot.util.CustomPopoverView;
 import com.jubi.ai.chatbot.util.FileAccessUtil;
-import com.jubi.ai.chatbot.util.ItemOffsetDecoration;
 import com.jubi.ai.chatbot.util.UiUtils;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.activity.WebViewActivity;
 import com.jubi.ai.chatbot.views.adapter.ChatMessageAdapter;
-import com.jubi.ai.chatbot.views.adapter.ChatMessageOptionAdapter;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -78,15 +65,12 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.kbeanie.multipicker.api.CacheLocation;
-import com.kbeanie.multipicker.api.CameraImagePicker;
 import com.kbeanie.multipicker.api.FilePicker;
 import com.kbeanie.multipicker.api.ImagePicker;
-import com.kbeanie.multipicker.api.Picker;
 import com.kbeanie.multipicker.api.callbacks.FilePickerCallback;
 import com.kbeanie.multipicker.api.callbacks.ImagePickerCallback;
 import com.kbeanie.multipicker.api.entity.ChosenFile;
 import com.kbeanie.multipicker.api.entity.ChosenImage;
-import com.squareup.picasso.Picasso;
 import com.xw.repo.XEditText;
 
 import net.gotev.speech.GoogleVoiceTypingDisabledException;
@@ -98,17 +82,10 @@ import net.gotev.speech.ui.SpeechProgressView;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import rx.subscriptions.CompositeSubscription;
-
-import static android.app.Activity.RESULT_OK;
 
 
 public class ChatBotFragment extends Fragment implements ChatBotView, View.OnClickListener, SpeechDelegate, PopupMenu.OnMenuItemClickListener, ImagePickerCallback, FilePickerCallback {
@@ -361,10 +338,8 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     }
 
     private void applyTheme() {
-
         MaterialTheme materialTheme = chatBotConfig.getMaterialTheme();
         MaterialColor materialColor = materialTheme.getColor();
-
         switch (materialTheme) {
             case WHITE:
                 toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getLight()), false));
@@ -417,7 +392,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     @Override
     public void onMessagePushed() {
-
+        Log.d("onMessagePushed", "yes");
     }
 
     @Override
@@ -427,13 +402,14 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     @Override
     public void onChatViewModelUpdate(List<ChatMessage> chatMessages) {
+
         if (chatMessages.size() == 0) {
             showNoChatMessagesView();
             pushMessage("get started");
             chatBotPresenter.startFakeTypingMessageListener();
         } else {
-            final ChatMessage chatMessage = chatMessages.get(chatMessages.size() - 1);
 
+            final ChatMessage chatMessage = chatMessages.get(chatMessages.size() - 1);
             Chat chat = ChatMessage.copyProperties(chatMessage);
             if (chatBotConfig.isSpeechRequired() && mute.getAlpha() != 0.3f && !isAppJustOpened) {
                 if (chat.isIncoming() && chat.getBotMessages() != null && chat.getBotMessages().size() > 0) {
@@ -449,9 +425,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                         Speech.getInstance().say(forSpeech.toString());
                 }
             }
-
             isAppJustOpened = false;
-
             chatMessageAdapter.addItems(chatMessages);
             recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
             if (empty.getVisibility() == View.VISIBLE)

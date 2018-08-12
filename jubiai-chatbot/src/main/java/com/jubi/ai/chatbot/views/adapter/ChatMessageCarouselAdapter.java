@@ -3,34 +3,23 @@ package com.jubi.ai.chatbot.views.adapter;
 import android.content.Context;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.jubi.ai.chatbot.R;
-import com.jubi.ai.chatbot.enums.MaterialColor;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.listeners.IResultListener;
-import com.jubi.ai.chatbot.models.BotMessage;
 import com.jubi.ai.chatbot.models.Chat;
 import com.jubi.ai.chatbot.models.ChatButton;
 import com.jubi.ai.chatbot.models.ChatOption;
-import com.jubi.ai.chatbot.persistence.ChatMessage;
-import com.jubi.ai.chatbot.util.ItemOffsetDecoration;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.viewholder.ChatMessageCarouselViewHolder;
-import com.jubi.ai.chatbot.views.viewholder.ChatMessageViewHolder;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessageCarouselViewHolder> {
@@ -68,9 +57,19 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
         holder.setIsRecyclable(false);
         ChatOption item = items.get(position);
         holder.title.setText(item.getTitle());
-        if (!Util.textIsEmpty(item.getImage())) {
-            holder.image.setVisibility(View.VISIBLE);
-            Picasso.with(context).load(item.getImage()).into(holder.image);
+        String url = item.getImage();
+
+        if (!Util.textIsEmpty(url)) {
+            if (url.contains("http://") || url.contains("https://")) {
+                holder.image.setVisibility(View.VISIBLE);
+                if (Util.getFileExtensionByUrl(url).toLowerCase().contains("gif")) {
+                    Glide.with(context).asGif().load(url).into(holder.image);
+                } else {
+                    Picasso.with(context).load(url).into(holder.image);
+                }
+            } else {
+                holder.image.setVisibility(View.GONE);
+            }
         } else {
             holder.image.setVisibility(View.GONE);
         }

@@ -3,52 +3,39 @@ package com.jubi.ai.chatbot.views.fragment;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.net.Uri;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.jubi.ai.chatbot.models.BasicResponse;
-import com.jubi.ai.chatbot.models.ChatBotConfig;
 import com.jubi.ai.chatbot.models.ChatButton;
 import com.jubi.ai.chatbot.models.ChatOption;
-import com.jubi.ai.chatbot.models.OutgoingMessage;
-import com.jubi.ai.chatbot.models.RestError;
 import com.jubi.ai.chatbot.persistence.ChatMessage;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.viewModel.ChatMessageListViewModel;
-import com.jubi.ai.chatbot.views.adapter.ChatMessageAdapter;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 public class ChatBotPresenter {
 
     private ChatBotView chatBotView;
     private ChatBotModel chatBotModel;
-    private CompositeSubscription compositeSubscription;
     private ChatMessageListViewModel chatMessageListViewModel;
 
 
     public ChatBotPresenter(ChatBotView chatBotView, ChatBotModel chatBotModel) {
         this.chatBotView = chatBotView;
         this.chatBotModel = chatBotModel;
-        compositeSubscription = new CompositeSubscription();
+        this.chatBotModel.deleteTypingMessage();
     }
 
     public void sendChat(String chatMessage) {
@@ -77,62 +64,46 @@ public class ChatBotPresenter {
     }
 
     public void pushMessage(String message) {
-        compositeSubscription.add(chatBotModel.pushMessage(message)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<BasicResponse>>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d("PushFCMToken", "completed");
-                    }
+        Call<BasicResponse> callBack = chatBotModel.pushMessage(message);
+        callBack.enqueue(new Callback<BasicResponse>() {
+            @Override
+            public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
+                if (response.code() == 200) {
+                    chatBotView.onMessagePushed();
+                } else {
+                    BasicResponse basicResponse = Util.handleError(response.errorBody());
+                    chatBotView.onMessagePushFailed(basicResponse.getError());
+                }
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("PushFCMToken", "onError " + e.getMessage());
-                        chatBotView.onMessagePushFailed(e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(Response<BasicResponse> response) {
-                        Log.d("PushFCMToken", "onNext " + response.code());
-                        if (response.code() == 200) {
-                            chatBotView.onMessagePushed();
-                        } else {
-                            BasicResponse basicResponse = Util.handleError(response.errorBody());
-                            chatBotView.onMessagePushFailed(basicResponse.getError());
-                        }
-                    }
-                }));
-
+            @Override
+            public void onFailure(Call<BasicResponse> call, Throwable t) {
+                Log.d("PushFCMToken", "onError " + t.getMessage());
+                chatBotView.onMessagePushFailed(t.getMessage());
+            }
+        });
     }
 
     public void pushImageMessage(String url) {
-        compositeSubscription.add(chatBotModel.pushImageMessage(url)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<BasicResponse>>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d("PushFCMToken", "completed");
-                    }
+        Call<BasicResponse> callBack = chatBotModel.pushImageMessage(url);
+        callBack.enqueue(new Callback<BasicResponse>() {
+            @Override
+            public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
+                if (response.code() == 200) {
+                    chatBotView.onMessagePushed();
+                } else {
+                    BasicResponse basicResponse = Util.handleError(response.errorBody());
+                    chatBotView.onMessagePushFailed(basicResponse.getError());
+                }
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("PushFCMToken", "onError " + e.getMessage());
-                        chatBotView.onMessagePushFailed(e.getMessage());
-                    }
+            @Override
+            public void onFailure(Call<BasicResponse> call, Throwable t) {
+                Log.d("PushFCMToken", "onError " + t.getMessage());
+                chatBotView.onMessagePushFailed(t.getMessage());
+            }
+        });
 
-                    @Override
-                    public void onNext(Response<BasicResponse> response) {
-                        Log.d("PushFCMToken", "onNext " + response.code());
-                        if (response.code() == 200) {
-                            chatBotView.onMessagePushed();
-                        } else {
-                            BasicResponse basicResponse = Util.handleError(response.errorBody());
-                            chatBotView.onMessagePushFailed(basicResponse.getError());
-                        }
-                    }
-                }));
 
     }
 

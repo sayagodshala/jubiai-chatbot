@@ -1,7 +1,6 @@
 package com.jubi.ai.chatbot.views.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 
 import com.google.gson.Gson;
 import com.jubi.ai.chatbot.ChatBotApp;
@@ -23,8 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import retrofit2.Response;
-import rx.Observable;
+import retrofit2.Call;
 
 public class ChatBotModel {
 
@@ -39,7 +37,7 @@ public class ChatBotModel {
         database = ChatBotApp.getDatabase(context);
         preferenceUtils = new PreferenceUtils(context);
         chatBotConfig = preferenceUtils.getChatBotConfig();
-        apiService = APIClient.getAdapterApiService(chatBotConfig.getHost());
+        apiService = APIClient.getAPIService(chatBotConfig.getHost());
     }
 
     public void insertChat(ChatMessage chatMessage) {
@@ -70,7 +68,7 @@ public class ChatBotModel {
         return preferenceUtils.isFCMTokenSaved();
     }
 
-    Observable<Response<BasicResponse>> pushMessage(String message) {
+    Call<BasicResponse> pushMessage(String message) {
         OutgoingMessage outgoingMessage = new OutgoingMessage();
         outgoingMessage.setAndroidId(preferenceUtils.getFCMToken());
         outgoingMessage.setProjectId(chatBotConfig.getProjectId());
@@ -78,7 +76,7 @@ public class ChatBotModel {
         return apiService.send(chatBotConfig.getPath(), chatBotConfig.getProjectId(), outgoingMessage);
     }
 
-    Observable<Response<BasicResponse>> pushImageMessage(String url) {
+    Call<BasicResponse> pushImageMessage(String url) {
         OutgoingMessage outgoingMessage = new OutgoingMessage();
         outgoingMessage.setAndroidId(preferenceUtils.getFCMToken());
         outgoingMessage.setProjectId(chatBotConfig.getProjectId());
@@ -231,7 +229,7 @@ public class ChatBotModel {
         return chatMessage;
     }
 
-    private void deleteTypingMessage() {
+    public void deleteTypingMessage() {
         ChatMessage[] chatMessage = database.chatMessageDao().findByAnswerType(AnswerType.TYPING.name());
         if (chatMessage != null) {
             database.chatMessageDao().deleteChatMessage(chatMessage);

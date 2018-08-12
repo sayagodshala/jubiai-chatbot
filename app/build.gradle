@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        chatbot {
+            keyAlias 'chatbot'
+            keyPassword '123456'
+            storeFile file('/Users/sayagodshala/Desktop/android_studio_projects/JubiAI-App/extras/keystore')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.jubi.ai.chatbot.demo"
@@ -40,10 +48,10 @@ dependencies {
     implementation('com.google.firebase:firebase-messaging:11.8.0') {
         exclude module: 'support-v4'
     }
-    implementation project(':jubiai-chatbot')
+        implementation project(':jubiai-chatbot')
     implementation 'com.facebook.stetho:stetho:1.5.0'
     implementation 'com.google.code.gson:gson:2.8.2'
-//    implementation 'com.sayagodshala:jubiai-chatbot:1.3.11'
+//    implementation 'com.sayagodshala:jubiai-chatbot:1.3.14'
 }
 
 apply plugin: 'com.google.gms.google-services'
