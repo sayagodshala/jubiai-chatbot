@@ -221,9 +221,9 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         chatMessageAdapter.setItemClickListener(new IResultListener<View>() {
             @Override
             public void onResult(View view) {
-                if (view.getTag() != null) {
-                    if (view.getTag() instanceof BotMessage) {
-                        BotMessage botMessage = (BotMessage) view.getTag();
+                if (view.getTag(R.id.message_adapter) != null) {
+                    if (view.getTag(R.id.message_adapter) instanceof BotMessage) {
+                        BotMessage botMessage = (BotMessage) view.getTag(R.id.message_adapter);
                         switch (botMessage.getType()) {
                             case TEXT:
                                 break;
@@ -236,7 +236,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
                                 if (ext.contains("jpg")
                                         || ext.contains("jpeg")
-                                        || ext.contains("png")) {
+                                        || ext.contains("png") || ext.contains("gif")) {
                                     intent.setDataAndType(Uri.parse(path), "image/*");
                                 } else if (ext.contains("pdf")) {
                                     intent.setDataAndType(Uri.parse(path), "application/pdf");

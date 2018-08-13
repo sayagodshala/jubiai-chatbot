@@ -18,7 +18,6 @@ import com.jubi.ai.chatbot.models.ChatButton;
 import com.jubi.ai.chatbot.models.ChatOption;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.viewholder.ChatMessageCarouselViewHolder;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -65,7 +64,7 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
                 if (Util.getFileExtensionByUrl(url).toLowerCase().contains("gif")) {
                     Glide.with(context).asGif().load(url).into(holder.image);
                 } else {
-                    Picasso.with(context).load(url).into(holder.image);
+                    Glide.with(context).load(url).into(holder.image);
                 }
             } else {
                 holder.image.setVisibility(View.GONE);

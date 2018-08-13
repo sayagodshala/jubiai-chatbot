@@ -1,18 +1,12 @@
 package com.jubi.ai.chatbot.views.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,27 +14,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.jubi.ai.chatbot.R;
+import com.jubi.ai.chatbot.enums.MaterialColor;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.listeners.IResultListener;
-import com.jubi.ai.chatbot.util.BitmapTransform;
-import com.jubi.ai.chatbot.util.ItemOffsetDecoration;
-import com.jubi.ai.chatbot.enums.MaterialColor;
 import com.jubi.ai.chatbot.models.BotMessage;
 import com.jubi.ai.chatbot.models.Chat;
 import com.jubi.ai.chatbot.models.ChatOption;
 import com.jubi.ai.chatbot.persistence.ChatMessage;
+import com.jubi.ai.chatbot.util.ItemOffsetDecoration;
 import com.jubi.ai.chatbot.util.MyLinearLayoutManager;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.viewholder.ChatMessageViewHolder;
-import com.squareup.picasso.Picasso;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHolder> {
 
@@ -135,15 +124,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                             if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://")) {
                                 if (Util.getFileExtensionByUrl(botMessage.getValue()).toLowerCase().contains("gif")) {
                                     Glide.with(context).asGif().load(botMessage.getValue()).into(imageView);
-//                                    imageView.setTag(R.id.glide_tag, botMessage);
                                 } else {
-                                    Picasso.with(context).load(botMessage.getValue()).into(imageView);
-                                    imageView.setTag(botMessage);
+                                    Glide.with(context).load(botMessage.getValue()).into(imageView);
                                 }
                             } else {
-                                Picasso.with(context).load(Uri.parse("file://" + botMessage.getValue())).into(imageView);
-                                imageView.setTag(botMessage);
+                                Glide.with(context).load(Uri.parse("file://" + botMessage.getValue())).into(imageView);
                             }
+                            imageView.setTag(R.id.message_adapter, botMessage);
                             imageView.setOnClickListener(clickListener);
                             holder.fieldCont.addView(view);
                         }
@@ -154,12 +141,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                             ImageView iv = view.findViewById(R.id.image);
                             iv.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
                             view.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                            iv.setTag(botMessage);
+                            iv.setTag(R.id.message_adapter, botMessage);
                             URL url = Util.checkURL(botMessage.getValue());
                             if (url != null) {
                                 if (url.getHost().contains("youtube") && !Util.textIsEmpty(url.getQuery())) {
                                     String vId = url.getQuery().substring(url.getQuery().lastIndexOf("=") + 1);
-                                    Picasso.with(context).load("https://i.ytimg.com/vi/" + vId + "/hqdefault.jpg").into(iv);
+                                    Glide.with(context).load("https://i.ytimg.com/vi/" + vId + "/hqdefault.jpg").into(iv);
                                 }
                             }
                             iv.setOnClickListener(clickListener);
@@ -252,18 +239,16 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                             ImageView imageView = view.findViewById(R.id.image);
                             LinearLayout imageCont = view.findViewById(R.id.image_cont);
                             imageCont.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getRegular()), false));
-                            imageView.setTag(botMessage);
+                            imageView.setTag(R.id.message_adapter, botMessage);
                             if (botMessage.getValue().contains("http://") || botMessage.getValue().contains("https://")) {
                                 String path = botMessage.getValue();
                                 String ext = Util.getFileExtensionByUrl(path).toLowerCase();
                                 if (ext.contains("jpg")
                                         || ext.contains("jpeg")
                                         || ext.contains("png")) {
-                                    Picasso.with(context).load(botMessage.getValue()).placeholder(R.drawable.placeholder).into(imageView);
+                                    Glide.with(context).load(botMessage.getValue()).into(imageView);
                                 } else if (ext.contains("gif")) {
-                                    imageView.setTag(null);
                                     Glide.with(context).asGif().load(botMessage.getValue()).into(imageView);
-//                                    imageView.setTag(R.id.glide_tag, botMessage);
                                 } else if (ext.contains("pdf")) {
                                     imageView.setImageResource(R.drawable.pdf);
                                 } else if (ext.contains("ppt") || ext.contains("pptx")) {

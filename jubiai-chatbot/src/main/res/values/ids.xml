@@ -5,4 +5,5 @@
     <item name="sub_option_id" type="id"/>
     <item name="option" type="id"/>
     <item name="glide_tag" type="id" />
+    <item name="message_adapter" type="id" />
 </resources>

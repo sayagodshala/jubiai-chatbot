@@ -3,7 +3,6 @@ package com.jubi.ai.chatbot.views.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amazonaws.mobile.client.AWSMobileClient;
-
-import com.bumptech.glide.request.target.ViewTarget;
 import com.jubi.ai.chatbot.ChatBotApp;
 import com.jubi.ai.chatbot.R;
 import com.jubi.ai.chatbot.listeners.ChatBotFragmentListener;
@@ -29,7 +26,6 @@ import com.jubi.ai.chatbot.persistence.PreferenceUtils;
 import com.jubi.ai.chatbot.services.ChatHeadService;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.fragment.ChatBotFragment;
-import com.squareup.picasso.Picasso;
 
 import net.gotev.speech.Logger;
 import net.gotev.speech.Speech;
@@ -57,7 +53,6 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         Speech.init(this, getPackageName());
         Speech.getInstance().setLocale(new Locale("en_IN"));
         Logger.setLogLevel(Logger.LogLevel.DEBUG);
-        Picasso.with(this).setLoggingEnabled(true);
         chatStartCont = findViewById(R.id.chat_start_cont);
         start = findViewById(R.id.start);
         chatDialog = findViewById(R.id.chat_dialog);
