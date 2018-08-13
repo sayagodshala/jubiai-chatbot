@@ -6,8 +6,10 @@ import com.jubi.ai.chatbot.enums.Type;
 public class ChatButton {
     @SerializedName("type")
     private String type;
+
     @SerializedName("text")
     private String text;
+
     @SerializedName("data")
     private String data;
 

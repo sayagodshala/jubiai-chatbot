@@ -6,12 +6,16 @@ public class OutgoingMessage {
 
     @SerializedName("androidId")
     private String androidId;
+
     @SerializedName("projectId")
     private String projectId;
+
     @SerializedName("lastAnswer")
     private String lastAnswer;
+
     @SerializedName("type")
     private String type;
+
     @SerializedName("url")
     private String url;
 

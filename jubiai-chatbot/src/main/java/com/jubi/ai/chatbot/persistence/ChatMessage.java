@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.jubi.ai.chatbot.enums.AnswerType;
 import com.jubi.ai.chatbot.models.BotMessage;
 import com.jubi.ai.chatbot.models.Chat;
 import com.jubi.ai.chatbot.models.ChatOption;
@@ -109,7 +108,7 @@ public class ChatMessage {
     }
 
     public static Chat copyProperties(ChatMessage chatMessage) {
-//        Log.d("ChatMessage", new Gson().toJson(chatMessage));
+        Log.d("ChatMessage1", new Gson().toJson(chatMessage));
         Chat chat = new Chat();
         chat.setId(chatMessage.getId());
         chat.setIncoming(chatMessage.isIncoming());
@@ -119,6 +118,7 @@ public class ChatMessage {
         chat.setBotMessages((List<BotMessage>) new Gson().fromJson(chatMessage.getBotMessage(), new TypeToken<Collection<BotMessage>>() {}.getType()));
         if(chatMessage.getOptions() != null)
             chat.setOptions((List<ChatOption>) new Gson().fromJson(chatMessage.getOptions(), new TypeToken<Collection<ChatOption>>() {}.getType()));
+        Log.d("ChatMessage2", new Gson().toJson(chatMessage));
         return chat;
     }
 

@@ -1,10 +1,7 @@
 package com.jubi.ai.chatbot.models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-
 import com.jubi.ai.chatbot.enums.AnswerType;
+import com.jubi.ai.chatbot.util.Util;
 
 import java.util.List;
 
@@ -62,10 +59,13 @@ public class Chat {
     }
 
     public AnswerType getAnswerType() {
-        if (answerType.equalsIgnoreCase("persist-option")) {
-            return AnswerType.PERSIST_OPTION;
+        if (!Util.textIsEmpty(answerType)) {
+            if (answerType.equalsIgnoreCase("persist-option")) {
+                return AnswerType.PERSIST_OPTION;
+            }
+            return AnswerType.valueOf(answerType.toUpperCase());
         }
-        return AnswerType.valueOf(answerType.toUpperCase());
+        return AnswerType.GENERIC;
     }
 
     public void setAnswerType(String answerType) {

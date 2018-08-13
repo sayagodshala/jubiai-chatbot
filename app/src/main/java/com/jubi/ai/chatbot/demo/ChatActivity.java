@@ -1,18 +1,12 @@
 package com.jubi.ai.chatbot.demo;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.models.ChatBotConfig;
-import com.jubi.ai.chatbot.services.ChatHeadService;
 import com.jubi.ai.chatbot.views.activity.ChatBotActivity;
 
 public class ChatActivity extends AppCompatActivity {
@@ -39,7 +33,7 @@ public class ChatActivity extends AppCompatActivity {
         chatBotConfig.setMaterialTheme(MaterialTheme.EARLY_SALARY);
         chatBotConfig.setTitle("Earl");
         chatBotConfig.setProjectId("JUBI15Q9uk_EarlySalaryUAT");
-        chatBotConfig.setPath("ios");
+        chatBotConfig.setPath("android");
         chatBotConfig.setHost("http://early-salary-development.herokuapp.com");
         chatBotConfig.setFcmToken(FirebaseInstanceId.getInstance().getToken());
         return chatBotConfig;

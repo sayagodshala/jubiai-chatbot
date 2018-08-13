@@ -402,7 +402,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     @Override
     public void onChatViewModelUpdate(List<ChatMessage> chatMessages) {
-
+//        Log.d("onChatViewModelUpdate", new Gson().toJson(chatMessages.get(0)));
         if (chatMessages.size() == 0) {
             showNoChatMessagesView();
             pushMessage("get started");

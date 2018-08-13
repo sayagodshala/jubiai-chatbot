@@ -6,18 +6,25 @@ public class ChatBotNotification {
 
     @SerializedName("webId")
     private String webId;
+
     @SerializedName("projectId")
     private String projectId;
+
     @SerializedName("botMessage")
     private String botMessage;
+
     @SerializedName("answerType")
     private String answerType;
+
     @SerializedName("options")
     private String options;
+
     @SerializedName("contentTitle")
     private String contentTitle;
+
     @SerializedName("message")
     private String message;
+
     @SerializedName("tickerText")
     private String tickerText;
 
