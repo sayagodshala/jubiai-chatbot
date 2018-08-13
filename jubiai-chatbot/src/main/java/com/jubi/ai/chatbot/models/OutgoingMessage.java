@@ -1,11 +1,18 @@
 package com.jubi.ai.chatbot.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class OutgoingMessage {
 
+    @SerializedName("androidId")
     private String androidId;
+    @SerializedName("projectId")
     private String projectId;
+    @SerializedName("lastAnswer")
     private String lastAnswer;
-    private String type = "attachment";
+    @SerializedName("type")
+    private String type;
+    @SerializedName("url")
     private String url;
 
     public OutgoingMessage() {
