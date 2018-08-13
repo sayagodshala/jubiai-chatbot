@@ -1,9 +1,14 @@
 package com.jubi.ai.chatbot.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class RestError {
 
+    @SerializedName("status")
     private int status;
+    @SerializedName("message")
     private String message;
+    @SerializedName("error")
     private String error;
 
     public RestError(int status, String message, String error) {

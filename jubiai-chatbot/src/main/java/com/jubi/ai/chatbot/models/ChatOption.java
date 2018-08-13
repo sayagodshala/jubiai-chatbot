@@ -1,12 +1,19 @@
 package com.jubi.ai.chatbot.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class ChatOption {
+    @SerializedName("title")
     private String title;
+    @SerializedName("text")
     private String text;
+    @SerializedName("data")
     private String data;
+    @SerializedName("image")
     private String image;
+    @SerializedName("buttons")
     private List<ChatButton> buttons;
 
     public ChatOption() {

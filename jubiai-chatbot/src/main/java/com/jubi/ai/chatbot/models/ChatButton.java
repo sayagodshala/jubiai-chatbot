@@ -1,10 +1,14 @@
 package com.jubi.ai.chatbot.models;
 
+import com.google.gson.annotations.SerializedName;
 import com.jubi.ai.chatbot.enums.Type;
 
 public class ChatButton {
+    @SerializedName("type")
     private String type;
+    @SerializedName("text")
     private String text;
+    @SerializedName("data")
     private String data;
 
     public ChatButton(String type, String text, String data) {
