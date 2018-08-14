@@ -58,8 +58,8 @@ public class ChatHeadService extends Service {
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         DisplayMetrics displaymetrics = new DisplayMetrics();
         mWindowManager.getDefaultDisplay().getMetrics(displaymetrics);
-        int height = displaymetrics.heightPixels - 200;
-        int width = displaymetrics.widthPixels - 200;
+        int xPos = displaymetrics.widthPixels - 200;
+        int yPos = displaymetrics.heightPixels - 400;
 
         //Add the view to the window.
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
@@ -72,8 +72,8 @@ public class ChatHeadService extends Service {
 
         //Specify the chat head position
         params.gravity = Gravity.TOP | Gravity.LEFT;        //Initially view will be added to top-left corner
-        params.x = width;
-        params.y = height;
+        params.x = xPos;
+        params.y = yPos;
 
         //Add the view to the window
         mWindowManager.addView(mChatHeadView, params);

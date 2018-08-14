@@ -16,6 +16,7 @@ import java.util.List;
 
 @Entity(tableName = "chat")
 public class ChatMessage {
+
     @PrimaryKey(autoGenerate = true)
     private int id;
 
@@ -118,7 +119,7 @@ public class ChatMessage {
         chat.setBotMessages((List<BotMessage>) new Gson().fromJson(chatMessage.getBotMessage(), new TypeToken<Collection<BotMessage>>() {}.getType()));
         if(chatMessage.getOptions() != null)
             chat.setOptions((List<ChatOption>) new Gson().fromJson(chatMessage.getOptions(), new TypeToken<Collection<ChatOption>>() {}.getType()));
-        Log.d("ChatMessage2", new Gson().toJson(chatMessage));
+        Log.d("ChatMessage2", new Gson().toJson(chat));
         return chat;
     }
 

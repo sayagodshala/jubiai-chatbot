@@ -156,7 +156,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             chatBotConfig = bundle.getParcelable(CHATBOT_CONFIG);
         }
 
-        chatBotPresenter = new ChatBotPresenter(this, new ChatBotModel(getActivity()));
+        chatBotPresenter = new ChatBotPresenter(this, new ChatBotModel(getActivity()), getActivity());
 
         Log.d("AuthUISettings", new Gson().toJson(chatBotConfig));
         Log.d("SHA1", Util.getCertificateSHA1Fingerprint(getActivity()));
@@ -298,7 +298,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         chatMessageAdapter.setChildItemClickListener(new IResultListener<View>() {
             @Override
             public void onResult(View view) {
-
                 if (view.getTag() != null) {
                     if (view.getTag() instanceof ChatOption) {
                         ChatOption chatOption = (ChatOption) view.getTag();
@@ -319,7 +318,10 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                                 chatMessage.setId(chat.getId());
                                 if (chat.getBotMessages() != null)
                                     chatMessage.setBotMessage(new Gson().toJson(chat.getBotMessages()));
-                                chatMessage.setAnswerType(chat.getAnswerType().getDescription().toUpperCase());
+
+                                if (chat.getAnswerType() != null && !Util.textIsEmpty(chat.getAnswerType().getDescription())) {
+                                    chatMessage.setAnswerType(chat.getAnswerType().getDescription().toUpperCase());
+                                }
                                 chatMessage.setWebId(chat.getWebId());
                                 chatMessage.setProjectId(chat.getProjectId());
                                 chatBotPresenter.updateChat(chatMessage);
@@ -350,6 +352,16 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getPrimaryText()), android.graphics.PorterDuff.Mode.SRC_IN);
                 attachment.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
+                break;
+            case EARLY_SALARY:
+                toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getLight()), false));
+                title.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
+                send.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getGrey()), android.graphics.PorterDuff.Mode.SRC_IN);
+                mic.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getGrey()), android.graphics.PorterDuff.Mode.SRC_IN);
+                submit.setBackground(Util.selectorRoundedBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getDark()), false));
+                submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
+                back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getPrimaryText()), android.graphics.PorterDuff.Mode.SRC_IN);
+                attachment.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getGrey()), android.graphics.PorterDuff.Mode.SRC_IN);
                 break;
             default:
                 toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));

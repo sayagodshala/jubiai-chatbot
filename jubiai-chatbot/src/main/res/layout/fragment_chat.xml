@@ -92,46 +92,60 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/light_grey"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="51dp"
+        android:background="@color/white"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/menu"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="8dp"
-            android:tint="@color/dark_grey"
-            android:src="@drawable/ic_menu" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/bg" />
 
-        <com.xw.repo.XEditText
-            android:id="@+id/message"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:drawableTint="@color/dark_grey"
-            android:hint="Message"
-            app:x_clearDrawable="@mipmap/ic_clear" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/mic"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/ic_microphone" />
+            <ImageView
+                android:id="@+id/menu"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_menu"
+                android:tint="@color/text" />
 
-        <ImageView
-            android:id="@+id/attachment"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/ic_attachment" />
+            <com.xw.repo.XEditText
+                android:id="@+id/message"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:drawableTint="@color/dark_grey"
+                android:hint="Type a message here"
+                android:textSize="15sp"
+                app:x_clearDrawable="@mipmap/ic_clear" />
 
-        <ImageView
-            android:id="@+id/send"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@mipmap/ic_send" />
+            <ImageView
+                android:id="@+id/mic"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_microphone" />
+
+            <ImageView
+                android:id="@+id/attachment"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_attachment" />
+
+            <ImageView
+                android:id="@+id/send"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@mipmap/ic_send" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -3,19 +3,24 @@ package com.jubi.ai.chatbot.views.fragment;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.jubi.ai.chatbot.enums.MaterialColor;
+import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.models.BasicResponse;
 import com.jubi.ai.chatbot.models.ChatButton;
 import com.jubi.ai.chatbot.models.ChatOption;
 import com.jubi.ai.chatbot.persistence.ChatMessage;
+import com.jubi.ai.chatbot.persistence.PreferenceUtils;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.viewModel.ChatMessageListViewModel;
 
@@ -29,12 +34,14 @@ public class ChatBotPresenter {
 
     private ChatBotView chatBotView;
     private ChatBotModel chatBotModel;
+    private Context context;
     private ChatMessageListViewModel chatMessageListViewModel;
 
 
-    public ChatBotPresenter(ChatBotView chatBotView, ChatBotModel chatBotModel) {
+    public ChatBotPresenter(ChatBotView chatBotView, ChatBotModel chatBotModel, Context context) {
         this.chatBotView = chatBotView;
         this.chatBotModel = chatBotModel;
+        this.context = context;
         this.chatBotModel.deleteTypingMessage();
     }
 
@@ -140,6 +147,11 @@ public class ChatBotPresenter {
         send.setAlpha(enable ? 1f : 0.3f);
         send.setEnabled(enable);
         send.setClickable(enable);
+        PreferenceUtils preferenceUtils = new PreferenceUtils(context);
+        if (preferenceUtils.getChatBotConfig().getMaterialTheme() == MaterialTheme.EARLY_SALARY) {
+            MaterialColor color = preferenceUtils.getChatBotConfig().getMaterialTheme().getColor();
+            send.setColorFilter(ContextCompat.getColor(context, enable ? color.getLight() : color.getGrey()), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
     }
 
     public void imageChatMessage(String url) {

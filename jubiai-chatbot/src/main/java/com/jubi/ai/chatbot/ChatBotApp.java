@@ -17,12 +17,9 @@ import com.jubi.ai.chatbot.models.ChatBotNotification;
 import com.jubi.ai.chatbot.persistence.ChatMessage;
 import com.jubi.ai.chatbot.persistence.JubiAIChatBotDatabase;
 import com.jubi.ai.chatbot.persistence.PreferenceUtils;
-import com.jubi.ai.chatbot.util.Util;
 
 import java.util.Date;
 import java.util.Map;
-
-import rx.subscriptions.CompositeSubscription;
 
 public class ChatBotApp {
 
@@ -60,6 +57,7 @@ public class ChatBotApp {
         chatRoomObject.setAnswerType(chatBotNotification.getAnswerType());
         if (chatBotNotification.getOptions() != null)
             chatRoomObject.setOptions(chatBotNotification.getOptions());
+        Log.d("ChatBotApp", "Message data mapped payload: " + new Gson().toJson(chatBotNotification));
         saveChatMessage(context, chatRoomObject);
     }
 
@@ -88,6 +86,7 @@ public class ChatBotApp {
         if (typingMessage != null) {
             database.chatMessageDao().deleteChatMessage(typingMessage);
         }
+        Log.d("saveChatMessage", new Gson().toJson(chatMessage));
         database.chatMessageDao().insertChat(chatMessage);
     }
 

@@ -203,16 +203,16 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                     break;
                 case GENERIC:
                     if (chat.getOptions() != null && chat.getOptions().size() > 0) {
-                        chatMessageCarouselAdapter = new ChatMessageCarouselAdapter(context, chat.getOptions(), materialTheme);
                         MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                        chatMessageCarouselAdapter = new ChatMessageCarouselAdapter(context, chat.getOptions(), materialTheme);
                         chatMessageCarouselAdapter.setItemClickListener(new IResultListener<View>() {
                             @Override
                             public void onResult(View view) {
                                 mChildItemClickListener.onResult(view);
                             }
                         });
-                        holder.carouselCont.setLayoutManager(layoutManager);
                         holder.carouselCont.setAdapter(chatMessageCarouselAdapter);
+                        holder.carouselCont.setLayoutManager(layoutManager);
                     }
                     break;
                 case TYPING:
@@ -290,6 +290,16 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                 holder.arrowSent.setColorFilter(ContextCompat.getColor(context, materialColor.getLight()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getLight()), context.getResources().getColor(materialColor.getLight()), false));
+                holder.sent.setTextColor(context.getResources().getColor(materialColor.getBlack()));
+                break;
+            case EARLY_SALARY:
+                holder.senderPic.setColorFilter(ContextCompat.getColor(context, materialColor.getGrey()), android.graphics.PorterDuff.Mode.SRC_IN);
+//                holder.brandLogo.setBackgroundDrawable(Util.drawCircle(context.getResources().getColor(materialColor.getDark())));
+//                holder.arrowSent.setColorFilter(ContextCompat.getColor(context, materialColor.getLight()), android.graphics.PorterDuff.Mode.SRC_IN);
+//                holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
+                holder.arrowSent.setVisibility(View.INVISIBLE);
+                holder.arrowRcvd.setVisibility(View.INVISIBLE);
+                holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getWhite()), context.getResources().getColor(materialColor.getGrey()), true));
                 holder.sent.setTextColor(context.getResources().getColor(materialColor.getBlack()));
                 break;
             default:

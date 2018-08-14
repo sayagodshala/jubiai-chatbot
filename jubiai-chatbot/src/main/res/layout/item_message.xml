@@ -40,8 +40,7 @@
             android:layout_marginLeft="-8dp"
             android:layout_toRightOf="@+id/arrow_rcvd"
             android:padding="6dp"
-            android:src="@drawable/dots"
-             />
+            android:src="@drawable/dots" />
 
         <!--android:layout_marginRight="24dp"-->
         <LinearLayout
@@ -76,13 +75,12 @@
 
         <ImageView
             android:id="@+id/sender_pic"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:src="@mipmap/ic_chat_pic"
-            android:tint="@color/colorPrimary" />
+            android:src="@drawable/ic_chat_user" />
 
 
         <RelativeLayout
@@ -110,17 +108,17 @@
                 android:background="@drawable/message_sent_bg"
                 android:padding="16dp"
                 android:text="My Message ssc ssv sdv "
-                android:textColor="@color/black"
+                android:textColor="@color/text"
                 android:textSize="14sp" />
 
             <LinearLayout
                 android:id="@+id/sent_field_cont"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:gravity="right"
                 android:layout_toLeftOf="@+id/arrow_sent"
-                android:orientation="vertical"></LinearLayout>
+                android:gravity="right"
+                android:orientation="vertical"
+                android:visibility="gone"></LinearLayout>
 
 
         </RelativeLayout>

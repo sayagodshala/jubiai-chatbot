@@ -1,18 +1,27 @@
 package com.jubi.ai.chatbot.models;
 
+import com.google.gson.annotations.SerializedName;
 import com.jubi.ai.chatbot.enums.AnswerType;
 import com.jubi.ai.chatbot.util.Util;
 
 import java.util.List;
 
 public class Chat {
+    @SerializedName("id")
     private int id;
+    @SerializedName("webId")
     private String webId;
+    @SerializedName("projectId")
     private String projectId;
+    @SerializedName("botMessages")
     private List<BotMessage> botMessages;
+    @SerializedName("options")
     private List<ChatOption> options;
+    @SerializedName("answerType")
     private String answerType;
+    @SerializedName("incoming")
     private Boolean incoming;
+    @SerializedName("persist")
     private Boolean persist;
 
     public Chat() {
