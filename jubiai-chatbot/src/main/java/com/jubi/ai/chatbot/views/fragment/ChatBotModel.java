@@ -55,7 +55,7 @@ public class ChatBotModel {
         database.chatMessageDao().insertChat(makeChatFromMessage(chatMessage));
     }
 
-    public void insertChat() {
+    public void insertFakeTypingMessage() {
         deleteTypingMessage();
         database.chatMessageDao().insertChat(typingChatMessage());
     }
@@ -82,6 +82,7 @@ public class ChatBotModel {
         outgoingMessage.setProjectId(chatBotConfig.getProjectId());
         outgoingMessage.setUrl(url);
         outgoingMessage.setType("attachment");
+        outgoingMessage.setLastAnswer("upload file {image::" + url + "}");
         return apiService.send(chatBotConfig.getPath(), chatBotConfig.getProjectId(), outgoingMessage);
     }
 

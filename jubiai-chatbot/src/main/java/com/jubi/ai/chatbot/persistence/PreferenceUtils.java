@@ -25,11 +25,19 @@ public class PreferenceUtils extends PreferenceHelper {
     public ChatBotConfig getChatBotConfig() {
         ChatBotConfig chatBotConfig = new ChatBotConfig();
         String raw = getString(Constants.PreferenceKeys.CHATBOTCONFIG, "");
-        if(!raw.equalsIgnoreCase("")) {
+        if (!raw.equalsIgnoreCase("")) {
             chatBotConfig = new Gson().fromJson(raw, ChatBotConfig.class);
         }
         return chatBotConfig;
     }
+
+    public Boolean isChatBotConfigGood() {
+        ChatBotConfig chatBotConfig = getChatBotConfig();
+        if (Util.textIsEmpty(chatBotConfig.getProjectId()) || Util.textIsEmpty(chatBotConfig.getHost()) || Util.textIsEmpty(chatBotConfig.getFcmToken()))
+            return false;
+        return true;
+    }
+
 
     public void setFCMToken(String token) {
         Log.d("setFCMToken", !Util.textIsEmpty(token) ? token : "empty");

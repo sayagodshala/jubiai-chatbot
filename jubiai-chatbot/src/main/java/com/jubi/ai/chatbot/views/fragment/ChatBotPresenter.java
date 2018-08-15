@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.jubi.ai.chatbot.ChatBotApp;
 import com.jubi.ai.chatbot.enums.MaterialColor;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.models.BasicResponse;
@@ -43,6 +44,14 @@ public class ChatBotPresenter {
         this.chatBotModel = chatBotModel;
         this.context = context;
         this.chatBotModel.deleteTypingMessage();
+
+    }
+
+    public void checkIfChatsAreAvailable() {
+        List<ChatMessage> allChats = ChatBotApp.getAllChats(context);
+        if (allChats != null && allChats.size() == 0) {
+            this.chatBotView.noChatsAvailable();
+        }
     }
 
     public void sendChat(String chatMessage) {
@@ -165,7 +174,7 @@ public class ChatBotPresenter {
             }
 
             public void onFinish() {
-                chatBotModel.insertChat();
+                chatBotModel.insertFakeTypingMessage();
             }
         }.start();
     }

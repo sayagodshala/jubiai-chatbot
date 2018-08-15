@@ -21,7 +21,7 @@ public class ChatMessageListViewModel extends AndroidViewModel {
     public ChatMessageListViewModel(@NonNull Application application) {
         super(application);
         jubiAIChatBotDatabase = ChatBotApp.getDatabase(this.getApplication());
-        chatMessageList = jubiAIChatBotDatabase.chatMessageDao().getAllChats();
+        chatMessageList = jubiAIChatBotDatabase.chatMessageDao().getAllChatsLive();
     }
 
     public LiveData<List<ChatMessage>> getChatMessageList() {

@@ -162,10 +162,14 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         Log.d("SHA1", Util.getCertificateSHA1Fingerprint(getActivity()));
         Log.d("Hash Key", Util.getKeyHash(getActivity()));
 
+        chatBotPresenter.checkIfChatsAreAvailable();
+
         bindView();
         setViewListeners();
         bindData();
         applyTheme();
+
+
 //        pushMessage("get started");
         return view;
     }
@@ -414,13 +418,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     @Override
     public void onChatViewModelUpdate(List<ChatMessage> chatMessages) {
-//        Log.d("onChatViewModelUpdate", new Gson().toJson(chatMessages.get(0)));
-        if (chatMessages.size() == 0) {
-            showNoChatMessagesView();
-            pushMessage("get started");
-            chatBotPresenter.startFakeTypingMessageListener();
-        } else {
-
+        if (chatMessages.size() > 0) {
             final ChatMessage chatMessage = chatMessages.get(chatMessages.size() - 1);
             Chat chat = ChatMessage.copyProperties(chatMessage);
             if (chatBotConfig.isSpeechRequired() && mute.getAlpha() != 0.3f && !isAppJustOpened) {
@@ -442,7 +440,15 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
             if (empty.getVisibility() == View.VISIBLE)
                 empty.setVisibility(View.GONE);
+        } else {
+            showNoChatMessagesView();
         }
+    }
+
+    @Override
+    public void noChatsAvailable() {
+        chatBotPresenter.startFakeTypingMessageListener();
+        pushMessage("get started");
     }
 
     @Override

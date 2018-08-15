@@ -19,6 +19,7 @@ import com.jubi.ai.chatbot.persistence.JubiAIChatBotDatabase;
 import com.jubi.ai.chatbot.persistence.PreferenceUtils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public class ChatBotApp {
@@ -88,6 +89,12 @@ public class ChatBotApp {
         }
         Log.d("saveChatMessage", new Gson().toJson(chatMessage));
         database.chatMessageDao().insertChat(chatMessage);
+    }
+
+    public static List<ChatMessage> getAllChats(Context context) {
+        JubiAIChatBotDatabase database = getDatabase(context);
+        List<ChatMessage> allChats = database.chatMessageDao().getAllChats();
+        return allChats;
     }
 
     public static void generateChatBotNotification(Context context, Class<?> cls, ChatBotNotification chatMessage, int icon) {

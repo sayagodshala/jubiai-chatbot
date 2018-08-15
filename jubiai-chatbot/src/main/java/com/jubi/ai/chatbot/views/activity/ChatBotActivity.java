@@ -1,6 +1,7 @@
 package com.jubi.ai.chatbot.views.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -24,6 +25,7 @@ import com.jubi.ai.chatbot.listeners.ChatBotFragmentListener;
 import com.jubi.ai.chatbot.models.ChatBotConfig;
 import com.jubi.ai.chatbot.persistence.PreferenceUtils;
 import com.jubi.ai.chatbot.services.ChatHeadService;
+import com.jubi.ai.chatbot.util.UiUtils;
 import com.jubi.ai.chatbot.util.Util;
 import com.jubi.ai.chatbot.views.fragment.ChatBotFragment;
 
@@ -76,19 +78,34 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         } else {
             chatBotConfigDialog();
         }
+
+        if (chatBotConfig.isWidgetRequired())
+            closeChatHeadService(ChatHeadService.class);
+
     }
 
     public static Intent getLaunchIntent(Context context) {
+        PreferenceUtils preferenceUtils = new PreferenceUtils(context);
         Intent intent = new Intent(context, ChatBotActivity.class);
         return intent;
     }
 
-    public static void setUp(Context context, ChatBotConfig chatBotConfig, boolean overlay) {
+    public static void launch(Context context) {
+        PreferenceUtils preferenceUtils = new PreferenceUtils(context);
+        if (preferenceUtils.isChatBotConfigGood()) {
+            Intent intent = new Intent(context, ChatBotActivity.class);
+            ((Activity) context).startActivity(intent);
+        } else {
+            UiUtils.showToast(context, "Oops! Bot is not Configured properly");
+        }
+    }
+
+    public static void setUp(Context context, ChatBotConfig chatBotConfig) {
         PreferenceUtils preferenceUtils = new PreferenceUtils(context);
         preferenceUtils.setFCMToken(chatBotConfig.getFcmToken());
         preferenceUtils.setChatBotConfig(chatBotConfig);
         ChatBotApp.initDatabase(context);
-        if (overlay) {
+        if (chatBotConfig.isWidgetRequired()) {
             checkOverlayPermsForWidget(context);
         }
     }
@@ -101,7 +118,8 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        initChatHead(this);
+        if (chatBotConfig != null && chatBotConfig.isWidgetRequired())
+            initChatHead(this);
     }
 
     @Override
@@ -114,6 +132,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     private void startTimerForChatWidget() {
         new CountDownTimer(5000, 1000) {
             public int counter = 0;
+
             public void onTick(long millisUntilFinished) {
                 counter += 1;
                 if (counter == 1) {
@@ -197,6 +216,21 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     protected void onDestroy() {
         Speech.getInstance().shutdown();
         super.onDestroy();
+    }
+
+
+    private void closeChatHeadService(Class<?> serviceClass) {
+        try {
+            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    stopService(new Intent(this, ChatHeadService.class));
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

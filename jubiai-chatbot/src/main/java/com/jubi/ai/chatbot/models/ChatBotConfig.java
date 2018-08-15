@@ -10,8 +10,6 @@ import com.jubi.ai.chatbot.enums.MaterialColor;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.util.Util;
 
-import java.util.Date;
-
 public class ChatBotConfig implements Parcelable {
 
     private MaterialTheme materialTheme = MaterialTheme.BLUE;
@@ -26,6 +24,7 @@ public class ChatBotConfig implements Parcelable {
     private String fcmToken;
     private boolean speechRequired = false;
     private boolean attachmentRequired = true;
+    private boolean widgetRequired = true;
 
     public ChatBotConfig() {
     }
@@ -161,6 +160,14 @@ public class ChatBotConfig implements Parcelable {
         this.attachmentRequired = attachmentRequired;
     }
 
+    public boolean isWidgetRequired() {
+        return widgetRequired;
+    }
+
+    public void setWidgetRequired(boolean widgetRequired) {
+        this.widgetRequired = widgetRequired;
+    }
+
     public final static class Builder {
         ChatBotConfig chatBotConfig;
 
@@ -200,6 +207,7 @@ public class ChatBotConfig implements Parcelable {
         dest.writeString(this.fcmToken);
         dest.writeByte(this.speechRequired ? (byte) 1 : (byte) 0);
         dest.writeByte(this.attachmentRequired ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.widgetRequired ? (byte) 1 : (byte) 0);
     }
 
     protected ChatBotConfig(Parcel in) {
@@ -215,6 +223,7 @@ public class ChatBotConfig implements Parcelable {
         this.fcmToken = in.readString();
         this.speechRequired = in.readByte() != 0;
         this.attachmentRequired = in.readByte() != 0;
+        this.widgetRequired = in.readByte() != 0;
     }
 
     public static final Creator<ChatBotConfig> CREATOR = new Creator<ChatBotConfig>() {
