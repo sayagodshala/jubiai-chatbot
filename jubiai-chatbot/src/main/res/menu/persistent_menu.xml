@@ -6,9 +6,27 @@
         android:id="@+id/start_over"
         android:title="Start Over" />
     <item
-        android:id="@+id/cancel"
-        android:title="Cancel Conversation" />
+        android:id="@+id/stat_account"
+        android:title="Statement of Account" />
+    <item
+        android:id="@+id/es_products"
+        android:title="EarlySalary Products" />
+    <item
+        android:id="@+id/eligibility"
+        android:title="Find my Eligibility" />
+    <item
+        android:id="@+id/operational"
+        android:title="Operational Cities" />
+    <item
+        android:id="@+id/es_benefits"
+        android:title="EarlySalary Benefits" />
+    <item
+        android:id="@+id/es_repayment"
+        android:title="Repayment Options" />
     <item
         android:id="@+id/talk"
-        android:title="Talk To Agent" />
+        android:title="Talk To agent" />
+    <item
+        android:id="@+id/cancel"
+        android:title="Cancel conversation" />
 </menu>

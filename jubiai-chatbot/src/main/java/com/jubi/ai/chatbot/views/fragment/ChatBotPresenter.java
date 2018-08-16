@@ -87,14 +87,20 @@ public class ChatBotPresenter {
                 if (response.code() == 200) {
                     chatBotView.onMessagePushed();
                 } else {
-                    BasicResponse basicResponse = Util.handleError(response.errorBody());
-                    chatBotView.onMessagePushFailed(basicResponse.getError());
+                    if (response.code() == 500) {
+                        chatBotView.onMessagePushFailed("500 Internal Server Error");
+                    } else if (response.code() == 404) {
+                        chatBotView.onMessagePushFailed("Not Found");
+                    } else {
+                        BasicResponse basicResponse = Util.handleError(response.errorBody());
+                        chatBotView.onMessagePushFailed(basicResponse.getError());
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<BasicResponse> call, Throwable t) {
-                Log.d("PushFCMToken", "onError " + t.getMessage());
+                Log.d("onFailure", "onError " + t.getMessage());
                 chatBotView.onMessagePushFailed(t.getMessage());
             }
         });
@@ -108,8 +114,14 @@ public class ChatBotPresenter {
                 if (response.code() == 200) {
                     chatBotView.onMessagePushed();
                 } else {
-                    BasicResponse basicResponse = Util.handleError(response.errorBody());
-                    chatBotView.onMessagePushFailed(basicResponse.getError());
+                    if (response.code() == 500) {
+                        chatBotView.onMessagePushFailed("500 Internal Server Error");
+                    } else if (response.code() == 404) {
+                        chatBotView.onMessagePushFailed("Not Found");
+                    } else {
+                        BasicResponse basicResponse = Util.handleError(response.errorBody());
+                        chatBotView.onMessagePushFailed(basicResponse.getError());
+                    }
                 }
             }
 

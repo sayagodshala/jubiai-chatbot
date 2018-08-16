@@ -414,6 +414,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     @Override
     public void onMessagePushFailed(String message) {
         Log.d("onMessagePushFailed", message);
+        UiUtils.showToast(getActivity(), message);
     }
 
     @Override
@@ -642,14 +643,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.start_over) {
-            pushMessage("get started");
-            chatBotPresenter.startFakeTypingMessageListener();
-            return true;
-        } else if (item.getItemId() == R.id.cancel) {
-            pushMessage("cancel");
-            return true;
-        } else if (item.getItemId() == R.id.camera) {
+        if (item.getItemId() == R.id.camera) {
             Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
                 @Override
                 public void onPermissionsChecked(MultiplePermissionsReport report) {
@@ -711,13 +705,14 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             }).check();
             return true;
         } else {
-            pushMessage("talk to agent");
+            pushMessage(item.getTitle().toString());
+            chatBotPresenter.startFakeTypingMessageListener();
             return true;
         }
     }
 
     private void uploadWithTransferUtility(final File file) {
-        setProgressDialog("Uploading", "Uploading dialog");
+        setProgressDialog("Processing", "Uploading Picture");
         final String extension = file.getName().substring(file.getName().lastIndexOf("."));
         final String fileName = System.currentTimeMillis() + extension;
         final String absoluteFileName = "https://s3.ap-south-1.amazonaws.com/mobile-dev-jubi/" + fileName;
