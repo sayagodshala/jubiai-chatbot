@@ -705,7 +705,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             }).check();
             return true;
         } else {
-            pushMessage(item.getTitle().toString());
+            chatBotPresenter.sendChat(item.getTitle().toString());
             chatBotPresenter.startFakeTypingMessageListener();
             return true;
         }
