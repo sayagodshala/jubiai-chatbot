@@ -225,51 +225,53 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         chatMessageAdapter.setItemClickListener(new IResultListener<View>() {
             @Override
             public void onResult(View view) {
-                if (view.getTag(R.id.message_adapter) != null) {
-                    if (view.getTag(R.id.message_adapter) instanceof BotMessage) {
-                        BotMessage botMessage = (BotMessage) view.getTag(R.id.message_adapter);
-                        switch (botMessage.getType()) {
-                            case TEXT:
-                                break;
-                            case IMAGE:
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_VIEW);
+                if (view != null) {
+                    if (view.getTag(R.id.message_adapter) != null) {
+                        if (view.getTag(R.id.message_adapter) instanceof BotMessage) {
+                            BotMessage botMessage = (BotMessage) view.getTag(R.id.message_adapter);
+                            switch (botMessage.getType()) {
+                                case TEXT:
+                                    break;
+                                case IMAGE:
+                                    Intent intent = new Intent();
+                                    intent.setAction(Intent.ACTION_VIEW);
 
-                                String path = botMessage.getValue();
-                                String ext = Util.getFileExtensionByUrl(path).toLowerCase();
+                                    String path = botMessage.getValue();
+                                    String ext = Util.getFileExtensionByUrl(path).toLowerCase();
 
-                                if (ext.contains("jpg")
-                                        || ext.contains("jpeg")
-                                        || ext.contains("png") || ext.contains("gif")) {
-                                    intent.setDataAndType(Uri.parse(path), "image/*");
-                                } else if (ext.contains("pdf")) {
-                                    intent.setDataAndType(Uri.parse(path), "application/pdf");
-                                } else if (ext.contains("ppt") || ext.contains("pptx")) {
-                                    intent.setDataAndType(Uri.parse(path), "application/vnd.ms-powerpoint");
-                                } else if (ext.contains("xls") || ext.contains("xlsx")) {
-                                    intent.setDataAndType(Uri.parse(path), "application/vnd.ms-excel");
-                                } else if (ext.contains("doc") || ext.contains(".docx")) {
-                                    intent.setDataAndType(Uri.parse(path), "application/msword");
-                                }
-                                startActivity(intent);
-                                break;
-                            case BUTTON:
-                                break;
-                            case VIDEO:
-                                Intent i = new Intent(getActivity(), WebViewActivity.class);
-                                URL url = Util.checkURL(botMessage.getValue());
-                                if (url != null) {
-                                    if (url.getHost().contains("youtube") && !Util.textIsEmpty(url.getQuery())) {
-                                        String vId = url.getQuery().substring(url.getQuery().lastIndexOf("=") + 1);
-                                        i.putExtra(WebViewActivity.DATA, new WebViewData("", vId));
-                                    } else {
-                                        i = PlayerActivity.getVideoPlayerIntent(getActivity(),
-                                                botMessage.getValue(),
-                                                "Video");
+                                    if (ext.contains("jpg")
+                                            || ext.contains("jpeg")
+                                            || ext.contains("png") || ext.contains("gif")) {
+                                        intent.setDataAndType(Uri.parse(path), "image/*");
+                                    } else if (ext.contains("pdf")) {
+                                        intent.setDataAndType(Uri.parse(path), "application/pdf");
+                                    } else if (ext.contains("ppt") || ext.contains("pptx")) {
+                                        intent.setDataAndType(Uri.parse(path), "application/vnd.ms-powerpoint");
+                                    } else if (ext.contains("xls") || ext.contains("xlsx")) {
+                                        intent.setDataAndType(Uri.parse(path), "application/vnd.ms-excel");
+                                    } else if (ext.contains("doc") || ext.contains(".docx")) {
+                                        intent.setDataAndType(Uri.parse(path), "application/msword");
                                     }
-                                }
-                                startActivity(i);
-                                break;
+                                    startActivity(intent);
+                                    break;
+                                case BUTTON:
+                                    break;
+                                case VIDEO:
+                                    Intent i = new Intent(getActivity(), WebViewActivity.class);
+                                    URL url = Util.checkURL(botMessage.getValue());
+                                    if (url != null) {
+                                        if (url.getHost().contains("youtube") && !Util.textIsEmpty(url.getQuery())) {
+                                            String vId = url.getQuery().substring(url.getQuery().lastIndexOf("=") + 1);
+                                            i.putExtra(WebViewActivity.DATA, new WebViewData("", vId));
+                                        } else {
+                                            i = PlayerActivity.getVideoPlayerIntent(getActivity(),
+                                                    botMessage.getValue(),
+                                                    "Video");
+                                        }
+                                    }
+                                    startActivity(i);
+                                    break;
+                            }
                         }
                     }
                 }

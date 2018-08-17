@@ -214,7 +214,11 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
 
     @Override
     protected void onDestroy() {
-        Speech.getInstance().shutdown();
+        try {
+            Speech.getInstance().shutdown();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 

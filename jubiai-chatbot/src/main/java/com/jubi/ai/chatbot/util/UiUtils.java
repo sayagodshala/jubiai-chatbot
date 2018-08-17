@@ -1,7 +1,6 @@
 package com.jubi.ai.chatbot.util;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Toast;
@@ -14,11 +13,13 @@ public class UiUtils {
 
 
     public static void showSnackbar(View view, String message, int length) {
-        Snackbar.make(view, message, length).setAction("Action", null).show();
+        if (view != null)
+            Snackbar.make(view, message, length).setAction("Action", null).show();
     }
 
     public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        if (context != null)
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
 //    public static TextDrawable getMaterialDrawable(String name) {
