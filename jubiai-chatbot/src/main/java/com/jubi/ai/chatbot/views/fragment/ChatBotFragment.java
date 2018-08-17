@@ -463,25 +463,28 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         } else if (view.getId() == R.id.hide_chat) {
             mListener.onHideChat();
         } else if (view.getId() == R.id.mic) {
-            Dexter.withActivity(getActivity())
-                    .withPermission(Manifest.permission.RECORD_AUDIO)
-                    .withListener(new PermissionListener() {
-                        @Override
-                        public void onPermissionGranted(PermissionGrantedResponse response) {
-                            startListening();
-                            /* ... */
-                        }
+            if (chatBotConfig.isSpeechRequired()) {
+                Dexter.withActivity(getActivity())
+                        .withPermission(Manifest.permission.RECORD_AUDIO)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse response) {
+                                startListening();
+                                /* ... */
+                            }
 
-                        @Override
-                        public void onPermissionDenied(PermissionDeniedResponse response) {
-                            /* ... */
-                        }
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse response) {
+                                /* ... */
+                            }
 
-                        @Override
-                        public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
 
-                        }
-                    }).check();
+                            }
+                        }).check();
+            }
+
 
         } else if (view.getId() == R.id.mute) {
             if (mute.getAlpha() == 0.3f) {
@@ -545,7 +548,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
     private void startListening() {
         Speech.getInstance().stopTextToSpeech();
-
         mic.setVisibility(View.GONE);
         speechCont.setVisibility(View.VISIBLE);
         try {

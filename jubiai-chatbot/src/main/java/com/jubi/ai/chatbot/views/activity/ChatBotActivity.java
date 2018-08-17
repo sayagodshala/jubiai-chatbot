@@ -51,10 +51,18 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         setContentView(R.layout.activity_chatbot);
 
         chatBotConfig = new ChatBotConfig();
+        preferenceUtils = new PreferenceUtils(this);
+        chatBotConfig = preferenceUtils.getChatBotConfig();
+
+
         AWSMobileClient.getInstance().initialize(this).execute();
-        Speech.init(this, getPackageName());
-        Speech.getInstance().setLocale(new Locale("en_IN"));
-        Logger.setLogLevel(Logger.LogLevel.DEBUG);
+
+        if (chatBotConfig.isSpeechRequired()) {
+            Speech.init(this, getPackageName());
+            Speech.getInstance().setLocale(new Locale("en_IN"));
+            Logger.setLogLevel(Logger.LogLevel.DEBUG);
+        }
+
         chatStartCont = findViewById(R.id.chat_start_cont);
         start = findViewById(R.id.start);
         chatDialog = findViewById(R.id.chat_dialog);
@@ -63,8 +71,6 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
         info = findViewById(R.id.info);
         submit = findViewById(R.id.submit);
         submit.setOnClickListener(this);
-        preferenceUtils = new PreferenceUtils(this);
-        chatBotConfig = preferenceUtils.getChatBotConfig();
         if (preferenceUtils.getFCMToken().equalsIgnoreCase("")) {
             fcmTokenEmptyDialog();
         } else if (chatBotConfig != null) {
@@ -214,10 +220,12 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
 
     @Override
     protected void onDestroy() {
-        try {
-            Speech.getInstance().shutdown();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
+        if (chatBotConfig.isSpeechRequired()) {
+            try {
+                Speech.getInstance().shutdown();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
         super.onDestroy();
     }
