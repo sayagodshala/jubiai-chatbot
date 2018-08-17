@@ -288,6 +288,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
         attachment.setVisibility(chatBotConfig.isAttachmentRequired() ? View.VISIBLE : View.GONE);
         mic.setVisibility(chatBotConfig.isSpeechRequired() ? View.VISIBLE : View.GONE);
+        mute.setVisibility(chatBotConfig.isSpeechRequired() ? View.VISIBLE : View.GONE);
 
     }
 
@@ -487,11 +488,13 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
 
 
         } else if (view.getId() == R.id.mute) {
-            if (mute.getAlpha() == 0.3f) {
-                mute.setAlpha(1.0f);
-            } else {
-                mute.setAlpha(0.3f);
-                UiUtils.showSnackbar(getActivity().findViewById(android.R.id.content), "Sound for speech is muted", Snackbar.LENGTH_SHORT);
+            if (chatBotConfig.isSpeechRequired()) {
+                if (mute.getAlpha() == 0.3f) {
+                    mute.setAlpha(1.0f);
+                } else {
+                    mute.setAlpha(0.3f);
+                    UiUtils.showSnackbar(getActivity().findViewById(android.R.id.content), "Sound for speech is muted", Snackbar.LENGTH_SHORT);
+                }
             }
         } else if (view.getId() == R.id.attachment) {
             whichIntent = "";
