@@ -15,6 +15,6 @@
         android:background="@drawable/message_received_bg"
         android:padding="16dp"
         android:text="Message Received"
-        android:textColor="@color/text"
+        android:textColor="@color/text1"
         android:textSize="14sp" />
 </LinearLayout>

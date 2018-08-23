@@ -44,11 +44,12 @@ public class ChatActivity extends AppCompatActivity {
         chatBotConfig.setAppLogo(R.drawable.ic_early_salary_logo);
         chatBotConfig.setMaterialTheme(MaterialTheme.EARLY_SALARY);
         chatBotConfig.setTitle("Earl");
-        chatBotConfig.setProjectId("JUBI15Q9uk_EarlySalaryUAT");
+        chatBotConfig.setProjectId("JUBI15Q9uk_EarlySalary");
         chatBotConfig.setPath("android");
-        chatBotConfig.setHost("http://early-salary-development.herokuapp.com");
+        chatBotConfig.setHost("https://early-salary-backend.herokuapp.com");
         chatBotConfig.setFcmToken(FirebaseInstanceId.getInstance().getToken());
         chatBotConfig.setWidgetRequired(false);
+        chatBotConfig.setPersistentMenu("Start Over, Statement of Account, EarlySalary Products, Find my Eligibility, Operational Cities, EarlySalary Benefits, Repayment Options, Talk To agent, Cancel conversation");
         return chatBotConfig;
     }
 

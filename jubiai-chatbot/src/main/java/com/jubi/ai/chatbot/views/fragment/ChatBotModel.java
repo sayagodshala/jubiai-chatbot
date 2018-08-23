@@ -53,6 +53,7 @@ public class ChatBotModel {
     public void insertChat(String chatMessage) {
         deleteTypingMessage();
         database.chatMessageDao().insertChat(makeChatFromMessage(chatMessage));
+//        database.chatMessageDao().insertChat(textChatMessageWithOptions());
     }
 
     public void insertFakeTypingMessage() {
@@ -135,6 +136,7 @@ public class ChatBotModel {
         List<ChatButton> chatButtons = new ArrayList<>();
         chatButtons.add(new ChatButton(Type.BUTTON.name(), "Know more", "responseDataTobackend"));
         chatButtons.add(new ChatButton(Type.BUTTON.name(), "Highlights", "responseDataTobackend"));
+        chatButtons.add(new ChatButton(Type.BUTTON.name(), "I Agree", "responseDataTobackend"));
         chatOption.setButtons(chatButtons);
 
         ChatOption chatOption1 = new ChatOption();
@@ -153,6 +155,7 @@ public class ChatBotModel {
         List<ChatButton> chatButtons2 = new ArrayList<>();
         chatButtons2.add(new ChatButton(Type.BUTTON.name(), "Confirm", "responseDataTobackend"));
         chatButtons2.add(new ChatButton(Type.BUTTON.name(), "Decline", "responseDataTobackend"));
+        chatButtons2.add(new ChatButton(Type.BUTTON.name(), "NotSo", "responseDataTobackend"));
         chatOption2.setButtons(chatButtons2);
 
         chatOptions.add(chatOption);
@@ -178,6 +181,7 @@ public class ChatBotModel {
         List<ChatOption> chatOptions = new ArrayList<>();
         chatOptions.add(new ChatOption("Yes", "yes"));
         chatOptions.add(new ChatOption("No", "no"));
+        chatOptions.add(new ChatOption("Okay", "no"));
 
         chatMessage.setBotMessage(new Gson().toJson(botMessages));
         chatMessage.setOptions(new Gson().toJson(chatOptions));

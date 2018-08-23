@@ -11,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -31,11 +32,11 @@ import com.fujiyuu75.sequent.Animation;
 import com.fujiyuu75.sequent.Direction;
 import com.fujiyuu75.sequent.Sequent;
 import com.google.gson.Gson;
+import com.jubi.ai.chatbot.R;
 import com.jubi.ai.chatbot.models.BasicResponse;
 import com.jubi.ai.chatbot.models.RestError;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -48,10 +49,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -343,6 +340,24 @@ public class Util {
         return states;
     }
 
+    public static StateListDrawable selectorOptionsBackground(int normal, int pressed, boolean stroke) {
+        GradientDrawable normalDrawable = new GradientDrawable();
+        normalDrawable.setColor(normal);
+        normalDrawable.setCornerRadius(16);
+        GradientDrawable pressedDrawable = new GradientDrawable();
+        pressedDrawable.setColor(pressed);
+        pressedDrawable.setCornerRadius(16);
+        if (stroke == true) {
+            normalDrawable.setStroke(4, normal);
+            pressedDrawable.setStroke(4, pressed);
+        }
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[]{android.R.attr.state_pressed},
+                pressedDrawable);
+        states.addState(new int[]{}, normalDrawable);
+        return states;
+    }
+
     public static StateListDrawable selectorBackground(int normal, int pressed, boolean stroke) {
         GradientDrawable normalDrawable = new GradientDrawable();
         normalDrawable.setColor(normal);
@@ -357,6 +372,20 @@ public class Util {
                 pressedDrawable);
         states.addState(new int[]{}, normalDrawable);
         return states;
+    }
+
+    public static ColorStateList textColorStates(int normal, int pressed) {
+        ColorStateList myColorStateList = new ColorStateList(
+                new int[][]{
+                        new int[]{android.R.attr.state_pressed},
+                        new int[]{}
+                },
+                new int[]{
+                        pressed,
+                        normal
+                }
+        );
+        return myColorStateList;
     }
 
     public static BasicResponse handleError(ResponseBody response) {

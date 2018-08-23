@@ -91,10 +91,14 @@ public class ChatBotPresenter {
                         chatBotView.onMessagePushFailed("500 Internal Server Error");
                     } else if (response.code() == 404) {
                         chatBotView.onMessagePushFailed("Not Found");
+                    } else if (response.code() == 503) {
+                        chatBotView.onMessagePushFailed("Service Unavailable");
                     } else {
-                        BasicResponse basicResponse = Util.handleError(response.errorBody());
-                        chatBotView.onMessagePushFailed(basicResponse.getError());
+                        chatBotView.onMessagePushFailed("oops! Something went wrong");
+//                        BasicResponse basicResponse = Util.handleError(response.errorBody());
+//                        chatBotView.onMessagePushFailed(basicResponse.getError());
                     }
+                    chatBotModel.deleteTypingMessage();
                 }
             }
 
@@ -118,21 +122,23 @@ public class ChatBotPresenter {
                         chatBotView.onMessagePushFailed("500 Internal Server Error");
                     } else if (response.code() == 404) {
                         chatBotView.onMessagePushFailed("Not Found");
+                    } else if (response.code() == 503) {
+                        chatBotView.onMessagePushFailed("Service Unavailable");
                     } else {
-                        BasicResponse basicResponse = Util.handleError(response.errorBody());
-                        chatBotView.onMessagePushFailed(basicResponse.getError());
+                        chatBotView.onMessagePushFailed("oops! Something went wrong");
+//                        BasicResponse basicResponse = Util.handleError(response.errorBody());
+//                        chatBotView.onMessagePushFailed(basicResponse.getError());
                     }
+                    chatBotModel.deleteTypingMessage();
                 }
             }
 
             @Override
             public void onFailure(Call<BasicResponse> call, Throwable t) {
-                Log.d("PushFCMToken", "onError " + t.getMessage());
+                Log.d("onFailure", "onError " + t.getMessage());
                 chatBotView.onMessagePushFailed(t.getMessage());
             }
         });
-
-
     }
 
     public void bindViewModel(FragmentActivity fragmentActivity, LifecycleOwner owner) {

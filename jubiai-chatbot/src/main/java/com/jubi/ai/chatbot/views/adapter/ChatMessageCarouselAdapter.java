@@ -56,6 +56,11 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
         holder.setIsRecyclable(false);
         ChatOption item = items.get(position);
         holder.title.setText(item.getTitle());
+        if (!Util.textIsEmpty(item.getText())) {
+            holder.text.setText(item.getText());
+        }
+        holder.text.setVisibility(Util.textIsEmpty(item.getText()) ? View.GONE : View.VISIBLE);
+
         String url = item.getImage();
 
         if (!Util.textIsEmpty(url)) {
@@ -82,6 +87,7 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
                 label.setText(button.getText());
                 label.setTag(button);
                 label.setOnClickListener(clickListener);
+                label.setTextColor(Util.textColorStates(context.getResources().getColor(materialTheme.getColor().getRegular()), context.getResources().getColor(materialTheme.getColor().getDark())));
                 holder.buttonsContainer.addView(view);
             }
         }

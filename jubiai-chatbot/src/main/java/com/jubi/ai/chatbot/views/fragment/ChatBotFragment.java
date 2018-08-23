@@ -17,6 +17,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -194,7 +196,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     @Override
     public void onDestroy() {
         super.onDestroy();
-
     }
 
     private void bindView() {
@@ -289,6 +290,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         attachment.setVisibility(chatBotConfig.isAttachmentRequired() ? View.VISIBLE : View.GONE);
         mic.setVisibility(chatBotConfig.isSpeechRequired() ? View.VISIBLE : View.GONE);
         mute.setVisibility(chatBotConfig.isSpeechRequired() ? View.VISIBLE : View.GONE);
+        menu.setVisibility(Util.textIsEmpty(chatBotConfig.getPersistentMenu()) ? View.GONE : View.VISIBLE);
 
     }
 
@@ -351,7 +353,6 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         MaterialColor materialColor = materialTheme.getColor();
         switch (materialTheme) {
             case WHITE:
-                toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getLight()), false));
                 title.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 send.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
                 mic.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -359,6 +360,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getPrimaryText()), android.graphics.PorterDuff.Mode.SRC_IN);
                 attachment.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getDark()), android.graphics.PorterDuff.Mode.SRC_IN);
+                toolbar.setBackground(UiUtils.getToolbarGradient(getActivity(), chatBotConfig.getMaterialTheme().getColor().getLight(), chatBotConfig.getMaterialTheme().getColor().getDark()));
                 break;
             case EARLY_SALARY:
                 toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getLight()), getResources().getColor(materialColor.getLight()), false));
@@ -369,9 +371,9 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getPrimaryText()), android.graphics.PorterDuff.Mode.SRC_IN);
                 attachment.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getGrey()), android.graphics.PorterDuff.Mode.SRC_IN);
+                toolbar.setBackground(UiUtils.getToolbarGradient(getActivity(), chatBotConfig.getMaterialTheme().getColor().getLight(), chatBotConfig.getMaterialTheme().getColor().getDark()));
                 break;
             default:
-                toolbar.setBackground(Util.selectorBackground(getResources().getColor(materialColor.getRegular()), getResources().getColor(materialColor.getDark()), false));
                 title.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 send.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
                 mic.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -379,6 +381,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
                 submit.setTextColor(getResources().getColor(materialColor.getPrimaryText()));
                 back.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getWhite()), android.graphics.PorterDuff.Mode.SRC_IN);
                 attachment.setColorFilter(ContextCompat.getColor(getActivity(), materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
+                toolbar.setBackground(UiUtils.getToolbarGradient(getActivity(), chatBotConfig.getMaterialTheme().getColor().getLight(), chatBotConfig.getMaterialTheme().getColor().getDark()));
                 break;
         }
     }
@@ -502,12 +505,18 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             popup.setOnMenuItemClickListener(this);
             popup.inflate(R.menu.attachment);
             popup.show();
-
         } else if (view.getId() == R.id.menu) {
-            PopupMenu popup = new PopupMenu(getActivity(), menu);
-            popup.setOnMenuItemClickListener(this);
-            popup.inflate(R.menu.persistent_menu);
-            popup.show();
+            if (!Util.textIsEmpty(chatBotConfig.getPersistentMenu())) {
+                PopupMenu popup = new PopupMenu(getActivity(), menu);
+                popup.setOnMenuItemClickListener(this);
+                String[] menus = chatBotConfig.getPersistentMenu().split(",");
+                for (String item : menus) {
+                    SpannableString s = new SpannableString(item);
+                    s.setSpan(new ForegroundColorSpan(getResources().getColor(chatBotConfig.getMaterialTheme().getColor().getRegular())), 0, s.length(), 0);
+                    popup.getMenu().add(s);
+                }
+                popup.show();
+            }
         } else {
             mListener.onChatBotBackpressed();
         }

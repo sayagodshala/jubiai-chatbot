@@ -25,6 +25,7 @@ public class ChatBotConfig implements Parcelable {
     private boolean speechRequired = false;
     private boolean attachmentRequired = true;
     private boolean widgetRequired = true;
+    private String persistentMenu;
 
     public ChatBotConfig() {
     }
@@ -168,6 +169,14 @@ public class ChatBotConfig implements Parcelable {
         this.widgetRequired = widgetRequired;
     }
 
+    public String getPersistentMenu() {
+        return persistentMenu;
+    }
+
+    public void setPersistentMenu(String persistentMenu) {
+        this.persistentMenu = persistentMenu;
+    }
+
     public final static class Builder {
         ChatBotConfig chatBotConfig;
 
@@ -208,6 +217,7 @@ public class ChatBotConfig implements Parcelable {
         dest.writeByte(this.speechRequired ? (byte) 1 : (byte) 0);
         dest.writeByte(this.attachmentRequired ? (byte) 1 : (byte) 0);
         dest.writeByte(this.widgetRequired ? (byte) 1 : (byte) 0);
+        dest.writeString(this.persistentMenu);
     }
 
     protected ChatBotConfig(Parcel in) {
@@ -224,6 +234,7 @@ public class ChatBotConfig implements Parcelable {
         this.speechRequired = in.readByte() != 0;
         this.attachmentRequired = in.readByte() != 0;
         this.widgetRequired = in.readByte() != 0;
+        this.persistentMenu = in.readString();
     }
 
     public static final Creator<ChatBotConfig> CREATOR = new Creator<ChatBotConfig>() {

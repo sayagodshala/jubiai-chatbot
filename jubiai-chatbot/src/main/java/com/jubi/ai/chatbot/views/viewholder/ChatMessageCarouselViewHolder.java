@@ -11,7 +11,7 @@ import com.jubi.ai.chatbot.R;
 
 public class ChatMessageCarouselViewHolder extends RecyclerView.ViewHolder {
 
-    public TextView title, label1,label2, label3, label4, label5;
+    public TextView title, text;
     public ImageView image;
     public LinearLayout buttonsContainer;
     public TextView[] labels;
@@ -19,7 +19,7 @@ public class ChatMessageCarouselViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         if (itemView != null) {
             title = itemView.findViewById(R.id.title);
-//            label1 = itemView.findViewById(R.id.label1);
+            text = itemView.findViewById(R.id.text);
 //            label2 = itemView.findViewById(R.id.label2);
 //            label3 = itemView.findViewById(R.id.label3);
 //            label4 = itemView.findViewById(R.id.label4);

@@ -8,13 +8,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:background="@drawable/btn_carousel_option"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
+        android:gravity="right"
         android:paddingLeft="16dp"
-        android:gravity="center"
+        android:paddingTop="8dp"
         android:paddingRight="16dp"
+        android:paddingBottom="8dp"
         android:text="Message Received"
+        android:textStyle="bold"
         android:textColor="@color/text"
         android:textSize="14sp" />
 </LinearLayout>
