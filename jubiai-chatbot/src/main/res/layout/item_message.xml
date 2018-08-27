@@ -107,7 +107,7 @@
                 android:background="@drawable/message_sent_bg"
                 android:padding="16dp"
                 android:text="My Message ssc ssv sdv "
-                android:textColor="@color/text"
+                android:textColor="#2c2c2c"
                 android:textSize="14sp" />
 
             <LinearLayout

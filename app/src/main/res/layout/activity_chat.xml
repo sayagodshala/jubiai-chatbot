@@ -28,7 +28,7 @@
         android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:widgetColor="#ff0000"></com.jubi.ai.chatbot.views.widget.InAppChatWidget>
+        app:widgetIcon="@drawable/ic_android"></com.jubi.ai.chatbot.views.widget.InAppChatWidget>
 
 
 </android.support.constraint.ConstraintLayout>

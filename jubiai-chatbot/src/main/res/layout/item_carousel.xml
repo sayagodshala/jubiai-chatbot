@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
-    android:layout_height="wrap_content"
+    android:layout_height="400dp"
     android:layout_marginRight="4dp"
     android:background="@drawable/carousel_bg"
     android:orientation="vertical"
@@ -20,6 +20,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:inputType="text"
+        android:maxLines="2"
         android:text="Carousel Title"
         android:textColor="@color/text"
         android:textSize="14sp"
@@ -30,6 +33,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:inputType="text"
+        android:maxLines="2"
         android:text="Carousel Text"
         android:textColor="@color/text1"
         android:textSize="14sp" />

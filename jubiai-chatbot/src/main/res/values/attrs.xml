@@ -2,5 +2,6 @@
 <resources>
     <declare-styleable name="InAppChatWidget">
         <attr name="widgetColor" format="color" />
+        <attr name="widgetIcon" format="reference" />
     </declare-styleable>
 </resources>

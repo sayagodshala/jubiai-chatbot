@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -49,6 +50,7 @@ public class ChatBotActivity extends AppCompatActivity implements ChatBotFragmen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatbot);
+        Log.d("getDisplayMetrics", String.valueOf(getResources().getDisplayMetrics().density));
 
         chatBotConfig = new ChatBotConfig();
         preferenceUtils = new PreferenceUtils(this);

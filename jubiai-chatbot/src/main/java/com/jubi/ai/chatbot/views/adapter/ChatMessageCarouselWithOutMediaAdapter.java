@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.jubi.ai.chatbot.R;
 import com.jubi.ai.chatbot.enums.MaterialTheme;
 import com.jubi.ai.chatbot.listeners.IResultListener;
@@ -17,11 +16,11 @@ import com.jubi.ai.chatbot.models.Chat;
 import com.jubi.ai.chatbot.models.ChatButton;
 import com.jubi.ai.chatbot.models.ChatOption;
 import com.jubi.ai.chatbot.util.Util;
-import com.jubi.ai.chatbot.views.viewholder.ChatMessageCarouselViewHolder;
+import com.jubi.ai.chatbot.views.viewholder.ChatMessageCarouselWithOutMediaViewHolder;
 
 import java.util.List;
 
-public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessageCarouselViewHolder> {
+public class ChatMessageCarouselWithOutMediaAdapter extends RecyclerView.Adapter<ChatMessageCarouselWithOutMediaViewHolder> {
 
     private Context context;
     private List<ChatOption> items;
@@ -29,17 +28,17 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
     private IResultListener<View> mItemClickListener;
     private Chat chat;
 
-    public ChatMessageCarouselAdapter(Context context, List<ChatOption> items, MaterialTheme materialTheme) {
+    public ChatMessageCarouselWithOutMediaAdapter(Context context, List<ChatOption> items, MaterialTheme materialTheme) {
         this.context = context;
         this.items = items;
         this.materialTheme = materialTheme;
     }
 
     @Override
-    public ChatMessageCarouselViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ChatMessageCarouselWithOutMediaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.item_carousel, parent, false);
-        return new ChatMessageCarouselViewHolder(view);
+        View view = layoutInflater.inflate(R.layout.item_carousel_without_media, parent, false);
+        return new ChatMessageCarouselWithOutMediaViewHolder(view);
     }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {
@@ -52,7 +51,7 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
     };
 
     @Override
-    public void onBindViewHolder(ChatMessageCarouselViewHolder holder, int position) {
+    public void onBindViewHolder(ChatMessageCarouselWithOutMediaViewHolder holder, int position) {
         holder.setIsRecyclable(false);
         ChatOption item = items.get(position);
         holder.title.setText(item.getTitle());
@@ -61,23 +60,6 @@ public class ChatMessageCarouselAdapter extends RecyclerView.Adapter<ChatMessage
         }
 
         holder.text.setVisibility(Util.textIsEmpty(item.getText()) ? View.GONE : View.VISIBLE);
-
-        String url = item.getImage();
-
-        if (!Util.textIsEmpty(url)) {
-            if (url.contains("http://") || url.contains("https://")) {
-                holder.image.setVisibility(View.VISIBLE);
-                if (Util.getFileExtensionByUrl(url).toLowerCase().contains("gif")) {
-                    Glide.with(context).asGif().load(url).into(holder.image);
-                } else {
-                    Glide.with(context).load(url).into(holder.image);
-                }
-            } else {
-                holder.image.setVisibility(View.GONE);
-            }
-        } else {
-            holder.image.setVisibility(View.GONE);
-        }
 
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

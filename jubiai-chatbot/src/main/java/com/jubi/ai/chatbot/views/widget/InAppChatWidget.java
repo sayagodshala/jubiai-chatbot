@@ -2,6 +2,7 @@ package com.jubi.ai.chatbot.views.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -11,9 +12,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.jubi.ai.chatbot.R;
-import com.jubi.ai.chatbot.enums.MaterialColor;
-import com.jubi.ai.chatbot.models.ChatBotConfig;
-import com.jubi.ai.chatbot.persistence.PreferenceUtils;
 import com.jubi.ai.chatbot.util.UiUtils;
 import com.jubi.ai.chatbot.views.activity.ChatBotActivity;
 
@@ -23,6 +21,7 @@ public class InAppChatWidget extends RelativeLayout {
     public ImageView mIcChat;
     private Context context;
     private int mWidgetColor = 0xffffff00;
+    private Drawable mWidgetIcon = null;
 
     public InAppChatWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -63,32 +62,37 @@ public class InAppChatWidget extends RelativeLayout {
     private void initAttributes(@Nullable AttributeSet attrs) {
         TypedArray styleAttrs = getContext().obtainStyledAttributes(
                 attrs, R.styleable.InAppChatWidget);
-        if (styleAttrs.hasValue(R.styleable.InAppChatWidget_widgetColor)) {
-//            String color = styleAttrs.getString(R.styleable.ChatInAppWidget_widget_color);
-//            if(!Util.textIsEmpty(color) && String.valueOf(color.charAt(0)).equalsIgnoreCase("#")) {
-//                mWidgetColor = Color.parseColor(color);
-//            }
 
+        if (styleAttrs.hasValue(R.styleable.InAppChatWidget_widgetColor)) {
             mWidgetColor = styleAttrs.getColor(R.styleable.InAppChatWidget_widgetColor, 0xffffff00);
         }
+
+        if (styleAttrs.hasValue(R.styleable.InAppChatWidget_widgetIcon)) {
+            mWidgetIcon = styleAttrs.getDrawable(R.styleable.InAppChatWidget_widgetIcon);
+        }
+
     }
 
     public void setBackGroundColor() {
         try {
             if (context != null) {
-
                 Log.d("mWidgetColor", mWidgetColor + "");
 
-                if (mWidgetColor != 0xffffff00) {
-                    mProceed.setBackground(UiUtils.getCircularGradient(mWidgetColor, mWidgetColor));
+                if (mWidgetIcon != null) {
+                    mProceed.setBackground(mWidgetIcon);
                 } else {
-                    PreferenceUtils preferenceUtils = new PreferenceUtils(context);
-                    ChatBotConfig chatBotConfig = preferenceUtils.getChatBotConfig();
-                    if (chatBotConfig != null) {
-                        MaterialColor materialColor = chatBotConfig.getMaterialTheme().getColor();
-                        mProceed.setBackground(UiUtils.getCircularGradient(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getDark())));
-                    }
+                    mProceed.setBackground(UiUtils.getCircularGradient(mWidgetColor, mWidgetColor));
                 }
+//                if (mWidgetColor != 0xffffff00) {
+//                    mProceed.setBackground(UiUtils.getCircularGradient(mWidgetColor, mWidgetColor));
+//                } else {
+//                    PreferenceUtils preferenceUtils = new PreferenceUtils(context);
+//                    ChatBotConfig chatBotConfig = preferenceUtils.getChatBotConfig();
+//                    if (chatBotConfig != null) {
+//                        MaterialColor materialColor = chatBotConfig.getMaterialTheme().getColor();
+//                        mProceed.setBackground(UiUtils.getCircularGradient(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getDark())));
+//                    }
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();

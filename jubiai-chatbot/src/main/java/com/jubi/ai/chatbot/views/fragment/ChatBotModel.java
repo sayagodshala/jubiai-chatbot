@@ -52,7 +52,8 @@ public class ChatBotModel {
 
     public void insertChat(String chatMessage) {
         deleteTypingMessage();
-        database.chatMessageDao().insertChat(makeChatFromMessage(chatMessage));
+//        database.chatMessageDao().insertChat(makeChatFromMessage(chatMessage));
+        database.chatMessageDao().insertChat(textChatMessageWithCarouselOptions());
 //        database.chatMessageDao().insertChat(textChatMessageWithOptions());
     }
 
@@ -132,7 +133,7 @@ public class ChatBotModel {
         ChatOption chatOption = new ChatOption();
         chatOption.setTitle("First Carousel");
         chatOption.setText("Sample text for First carousel");
-        chatOption.setImage("http://139.59.22.129/plantandmachinery/saya_website/images/pic10.png");
+//        chatOption.setImage("http://139.59.22.129/plantandmachinery/saya_website/images/pic10.png");
         List<ChatButton> chatButtons = new ArrayList<>();
         chatButtons.add(new ChatButton(Type.BUTTON.name(), "Know more", "responseDataTobackend"));
         chatButtons.add(new ChatButton(Type.BUTTON.name(), "Highlights", "responseDataTobackend"));
@@ -142,7 +143,7 @@ public class ChatBotModel {
         ChatOption chatOption1 = new ChatOption();
         chatOption1.setTitle("Second Carousel");
         chatOption1.setText("Sample text for Second carousel");
-        chatOption1.setImage("http://139.59.22.129/plantandmachinery/saya_website/images/box8.png");
+//        chatOption1.setImage("http://139.59.22.129/plantandmachinery/saya_website/images/box8.png");
         List<ChatButton> chatButtons1 = new ArrayList<>();
         chatButtons1.add(new ChatButton(Type.BUTTON.name(), "About", "responseDataTobackend"));
         chatButtons1.add(new ChatButton(Type.BUTTON.name(), "Detail", "responseDataTobackend"));
@@ -151,7 +152,7 @@ public class ChatBotModel {
         ChatOption chatOption2 = new ChatOption();
         chatOption2.setTitle("Third Carousel");
         chatOption2.setText("Sample text for Third carousel");
-        chatOption2.setImage("http://139.59.22.129/plantandmachinery/saya_website/images/ap.png");
+//        chatOption2.setImage("http://139.59.22.129/plantandmachinery/saya_website/images/ap.png");
         List<ChatButton> chatButtons2 = new ArrayList<>();
         chatButtons2.add(new ChatButton(Type.BUTTON.name(), "Confirm", "responseDataTobackend"));
         chatButtons2.add(new ChatButton(Type.BUTTON.name(), "Decline", "responseDataTobackend"));
@@ -179,9 +180,8 @@ public class ChatBotModel {
         botMessages.add(new BotMessage(2, Type.TEXT.name(), "This is sample for options based chat"));
 
         List<ChatOption> chatOptions = new ArrayList<>();
-        chatOptions.add(new ChatOption("Yes", "yes"));
-        chatOptions.add(new ChatOption("No", "no"));
-        chatOptions.add(new ChatOption("Okay", "no"));
+        chatOptions.add(new ChatOption("Yes asda ss sdvsdvsdv sdvsdvsv sdsdv", "yes"));
+        chatOptions.add(new ChatOption("Noasc ssdvsd sdvsdv sdsdv ds", "no"));
 
         chatMessage.setBotMessage(new Gson().toJson(botMessages));
         chatMessage.setOptions(new Gson().toJson(chatOptions));

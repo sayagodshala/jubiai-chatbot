@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.jubi.ai.chatbot.models.BotMessage;
 import com.jubi.ai.chatbot.models.Chat;
 import com.jubi.ai.chatbot.models.ChatOption;
 import com.jubi.ai.chatbot.persistence.ChatMessage;
+import com.jubi.ai.chatbot.util.GridAutofitLayoutManager;
 import com.jubi.ai.chatbot.util.ItemOffsetDecoration;
 import com.jubi.ai.chatbot.util.MyLinearLayoutManager;
 import com.jubi.ai.chatbot.util.Util;
@@ -40,6 +42,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
     private int appLogo;
     private ChatMessageOptionAdapter chatMessageOptionAdapter;
     private ChatMessageCarouselAdapter chatMessageCarouselAdapter;
+    private ChatMessageCarouselWithOutMediaAdapter chatMessageCarouselWithOutMediaAdapter;
 
     private IResultListener<View> mChildItemClickListener;
     private IResultListener<View> mItemClickListener;
@@ -158,6 +161,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
             RecyclerView recyclerView;
             ItemOffsetDecoration itemDecoration = null;
             GridLayoutManager gridLayoutManager = null;
+            LinearLayoutManager linearLayoutManager = null;
+            StaggeredGridLayoutManager staggeredGridLayoutManager = null;
+            GridAutofitLayoutManager gridAutofitLayoutManager = null;
             switch (chat.getAnswerType()) {
                 case TEXT:
 
@@ -173,8 +179,16 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                                 mChildItemClickListener.onResult(view);
                             }
                         });
-                        gridLayoutManager = new GridLayoutManager(context, 2);
-                        recyclerView.setLayoutManager(gridLayoutManager);
+
+                        if (chat.getOptions().size() > 2) {
+                            gridLayoutManager = new GridLayoutManager(context, 2);
+                            recyclerView.setLayoutManager(gridLayoutManager);
+                        } else {
+                            linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                        }
+
+
                         recyclerView.setAdapter(chatMessageOptionAdapter);
                         chatMessageOptionAdapter.addItems(chat);
                         recyclerView.addItemDecoration(itemDecoration);
@@ -203,15 +217,30 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                     break;
                 case GENERIC:
                     if (chat.getOptions() != null && chat.getOptions().size() > 0) {
+
+                        String url = chat.getOptions().get(0).getImage();
+
                         MyLinearLayoutManager layoutManager = new MyLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-                        chatMessageCarouselAdapter = new ChatMessageCarouselAdapter(context, chat.getOptions(), materialTheme);
-                        chatMessageCarouselAdapter.setItemClickListener(new IResultListener<View>() {
-                            @Override
-                            public void onResult(View view) {
-                                mChildItemClickListener.onResult(view);
-                            }
-                        });
-                        holder.carouselCont.setAdapter(chatMessageCarouselAdapter);
+
+                        if (Util.textIsEmpty(url)) {
+                            chatMessageCarouselWithOutMediaAdapter = new ChatMessageCarouselWithOutMediaAdapter(context, chat.getOptions(), materialTheme);
+                            chatMessageCarouselWithOutMediaAdapter.setItemClickListener(new IResultListener<View>() {
+                                @Override
+                                public void onResult(View view) {
+                                    mChildItemClickListener.onResult(view);
+                                }
+                            });
+                            holder.carouselCont.setAdapter(chatMessageCarouselWithOutMediaAdapter);
+                        } else {
+                            chatMessageCarouselAdapter = new ChatMessageCarouselAdapter(context, chat.getOptions(), materialTheme);
+                            chatMessageCarouselAdapter.setItemClickListener(new IResultListener<View>() {
+                                @Override
+                                public void onResult(View view) {
+                                    mChildItemClickListener.onResult(view);
+                                }
+                            });
+                            holder.carouselCont.setAdapter(chatMessageCarouselAdapter);
+                        }
                         holder.carouselCont.setLayoutManager(layoutManager);
                     }
                     break;
@@ -228,8 +257,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
                     case TEXT:
                         if (!Util.textIsEmpty(botMessage.getValue())) {
                             holder.sent.setText(botMessage.getValue());
-                            holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getChatBubbleRcvd()), context.getResources().getColor(materialColor.getChatBubbleRcvd()), false));
-                            holder.sent.setTextColor(context.getResources().getColor(materialColor.getBlack()));
                         }
                         break;
                     case IMAGE:
@@ -289,8 +316,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
 //                holder.brandLogo.setBackgroundDrawable(Util.drawCircle(context.getResources().getColor(materialColor.getDark())));
                 holder.arrowSent.setColorFilter(ContextCompat.getColor(context, materialColor.getLight()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
-                holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getLight()), context.getResources().getColor(materialColor.getLight()), false));
-                holder.sent.setTextColor(context.getResources().getColor(materialColor.getBlack()));
                 break;
             case EARLY_SALARY:
                 holder.senderPic.setColorFilter(ContextCompat.getColor(context, materialColor.getGrey()), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -299,12 +324,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
 //                holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.arrowSent.setVisibility(View.INVISIBLE);
                 holder.arrowRcvd.setVisibility(View.INVISIBLE);
-                holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getWhite()), context.getResources().getColor(materialColor.getGrey()), true));
-                holder.sent.setTextColor(context.getResources().getColor(materialColor.getBlack()));
                 break;
             default:
-                holder.sent.setBackground(Util.selectorRoundedBackground(context.getResources().getColor(materialColor.getRegular()), context.getResources().getColor(materialColor.getRegular()), false));
-                holder.sent.setTextColor(context.getResources().getColor(materialColor.getWhite()));
                 holder.arrowSent.setColorFilter(ContextCompat.getColor(context, materialColor.getRegular()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.arrowRcvd.setColorFilter(ContextCompat.getColor(context, materialColor.getChatBubbleRcvd()), android.graphics.PorterDuff.Mode.SRC_IN);
                 holder.senderPic.setColorFilter(ContextCompat.getColor(context, materialColor.getLight()), android.graphics.PorterDuff.Mode.SRC_IN);

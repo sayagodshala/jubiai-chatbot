@@ -17,16 +17,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
@@ -104,7 +105,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
     private View view;
     private XEditText message;
     private ImageView send, back, hideChat, mic, mute, attachment, menu;
-    private TextView title, headline, info;
+    private TextView title, subTitle, headline, info;
     private LinearLayout toolbar, empty, speechCont;
     private RecyclerView recyclerView, persistOption;
     private Button submit;
@@ -207,6 +208,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         mic = view.findViewById(R.id.mic);
         recyclerView = view.findViewById(R.id.recycler_view);
         title = view.findViewById(R.id.title);
+        subTitle = view.findViewById(R.id.sub_title);
         back = view.findViewById(R.id.back);
         toolbar = view.findViewById(R.id.toolbar);
         empty = view.findViewById(R.id.empty);
@@ -285,13 +287,17 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
         int[] heights = {40, 56, 38, 60, 35};
         speechProgress.setBarMaxHeightsInDp(heights);
 
-        hideChat.setVisibility(View.GONE);
+        back.setVisibility(View.GONE);
 
         attachment.setVisibility(chatBotConfig.isAttachmentRequired() ? View.VISIBLE : View.GONE);
         mic.setVisibility(chatBotConfig.isSpeechRequired() ? View.VISIBLE : View.GONE);
         mute.setVisibility(chatBotConfig.isSpeechRequired() ? View.VISIBLE : View.GONE);
         menu.setVisibility(Util.textIsEmpty(chatBotConfig.getPersistentMenu()) ? View.GONE : View.VISIBLE);
 
+        if (!Util.textIsEmpty(chatBotConfig.getSubTitle())) {
+            subTitle.setVisibility(View.VISIBLE);
+            subTitle.setText(chatBotConfig.getSubTitle());
+        }
     }
 
     private void setViewListeners() {
@@ -465,7 +471,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             message.setText("");
             chatBotPresenter.startFakeTypingMessageListener();
         } else if (view.getId() == R.id.hide_chat) {
-            mListener.onHideChat();
+            mListener.onChatBotBackpressed();
         } else if (view.getId() == R.id.mic) {
             if (chatBotConfig.isSpeechRequired()) {
                 Dexter.withActivity(getActivity())
@@ -507,15 +513,36 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             popup.show();
         } else if (view.getId() == R.id.menu) {
             if (!Util.textIsEmpty(chatBotConfig.getPersistentMenu())) {
-                PopupMenu popup = new PopupMenu(getActivity(), menu);
-                popup.setOnMenuItemClickListener(this);
-                String[] menus = chatBotConfig.getPersistentMenu().split(",");
-                for (String item : menus) {
-                    SpannableString s = new SpannableString(item);
-                    s.setSpan(new ForegroundColorSpan(getResources().getColor(chatBotConfig.getMaterialTheme().getColor().getRegular())), 0, s.length(), 0);
-                    popup.getMenu().add(s);
-                }
-                popup.show();
+
+                final String[] items = chatBotConfig.getPersistentMenu().split(",");
+
+                ListPopupWindow listPopupWindow = new ListPopupWindow(
+                        getActivity());
+                listPopupWindow.setAdapter(new ArrayAdapter(
+                        getActivity(),
+                        R.layout.item_popup, items));
+                listPopupWindow.setAnchorView(menu);
+                listPopupWindow.setWidth(600);
+                listPopupWindow.setHeight(600);
+                listPopupWindow.setModal(true);
+//                listPopupWindow.setBackgroundDrawable(Util.selectorBackground(chatBotConfig.getMaterialTheme().getColor().getLight(), chatBotConfig.getMaterialTheme().getColor().getDark(), false));
+                listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        chatBotPresenter.sendChat(items[i]);
+                        chatBotPresenter.startFakeTypingMessageListener();
+                    }
+                });
+                listPopupWindow.show();
+//                PopupMenu popup = new PopupMenu(getActivity(), menu);
+//                popup.setOnMenuItemClickListener(this);
+//                String[] menus = chatBotConfig.getPersistentMenu().split(",");
+//                for (String item : menus) {
+//                    SpannableString s = new SpannableString(item);
+//                    s.setSpan(new ForegroundColorSpan(getResources().getColor(chatBotConfig.getMaterialTheme().getColor().getRegular())), 0, s.length(), 0);
+//                    popup.getMenu().add(s);
+//                }
+//                popup.show();
             }
         } else {
             mListener.onChatBotBackpressed();
@@ -721,8 +748,7 @@ public class ChatBotFragment extends Fragment implements ChatBotView, View.OnCli
             }).check();
             return true;
         } else {
-            chatBotPresenter.sendChat(item.getTitle().toString());
-            chatBotPresenter.startFakeTypingMessageListener();
+
             return true;
         }
     }

@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -343,13 +344,13 @@ public class Util {
     public static StateListDrawable selectorOptionsBackground(int normal, int pressed, boolean stroke) {
         GradientDrawable normalDrawable = new GradientDrawable();
         normalDrawable.setColor(normal);
-        normalDrawable.setCornerRadius(16);
+        normalDrawable.setCornerRadius(24);
         GradientDrawable pressedDrawable = new GradientDrawable();
         pressedDrawable.setColor(pressed);
-        pressedDrawable.setCornerRadius(16);
+        pressedDrawable.setCornerRadius(24);
         if (stroke == true) {
-            normalDrawable.setStroke(4, normal);
-            pressedDrawable.setStroke(4, pressed);
+            normalDrawable.setStroke(2, Color.parseColor("#f4f3f3"));
+            pressedDrawable.setStroke(2, Color.parseColor("#f4f3f3"));
         }
         StateListDrawable states = new StateListDrawable();
         states.addState(new int[]{android.R.attr.state_pressed},

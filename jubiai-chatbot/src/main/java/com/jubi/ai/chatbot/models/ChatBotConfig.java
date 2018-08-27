@@ -17,6 +17,7 @@ public class ChatBotConfig implements Parcelable {
     private String webId = null;
     private String projectId = null;
     private String title = "Jubi.AI ChatBot";
+    private String subTitle;
     private boolean saveChat = true;
     private String regularColor = null;
     private String host = null;
@@ -177,6 +178,14 @@ public class ChatBotConfig implements Parcelable {
         this.persistentMenu = persistentMenu;
     }
 
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
+
     public final static class Builder {
         ChatBotConfig chatBotConfig;
 
@@ -209,6 +218,7 @@ public class ChatBotConfig implements Parcelable {
         dest.writeString(this.webId);
         dest.writeString(this.projectId);
         dest.writeString(this.title);
+        dest.writeString(this.subTitle);
         dest.writeByte(this.saveChat ? (byte) 1 : (byte) 0);
         dest.writeString(this.regularColor);
         dest.writeString(this.host);
@@ -226,6 +236,7 @@ public class ChatBotConfig implements Parcelable {
         this.webId = in.readString();
         this.projectId = in.readString();
         this.title = in.readString();
+        this.subTitle = in.readString();
         this.saveChat = in.readByte() != 0;
         this.regularColor = in.readString();
         this.host = in.readString();

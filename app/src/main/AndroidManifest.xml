@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".AndroidApp"
@@ -40,9 +41,9 @@
         <!-- [END fcm_default_icon] -->
         <!-- [START fcm_default_channel] -->
         <meta-data
-        android:name="com.google.firebase.messaging.default_notification_channel_id"
-        android:value="@string/default_notification_channel_id"/>
-         <!--[END fcm_default_channel] -->
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+        <!--[END fcm_default_channel] -->
 
         <service android:name=".messaging.MyFirebaseMessagingService">
             <intent-filter>
@@ -52,9 +53,9 @@
         <!-- [END firebase_service] -->
         <!-- [START firebase_iid_service] -->
         <!--<service android:name=".messaging.MyFirebaseInstanceIDService">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT" />-->
-            <!--</intent-filter>-->
+        <!--<intent-filter>-->
+        <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT" />-->
+        <!--</intent-filter>-->
         <!--</service>-->
 
     </application>
